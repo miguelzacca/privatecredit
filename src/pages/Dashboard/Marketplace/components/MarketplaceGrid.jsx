@@ -1,5 +1,6 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { Search } from 'lucide-react';
 import { MarketplaceCard } from './MarketplaceCard';
 import styles from './MarketplaceGrid.module.css';
 
@@ -31,7 +32,9 @@ export function MarketplaceGrid({ offers, viewMode, loading }) {
   if (offers.length === 0) {
     return (
       <div className={styles.emptyState}>
-        <div className={styles.emptyIcon}>🔍</div>
+        <div className={styles.emptyIcon}>
+          <Search size={48} strokeWidth={1.5} />
+        </div>
         <h3>Nenhuma oferta encontrada</h3>
         <p>Ajuste seus filtros ou tente buscar com outras palavras-chave.</p>
       </div>
