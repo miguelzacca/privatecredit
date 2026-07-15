@@ -161,7 +161,7 @@ export function AiChat() {
     setInputValue('');
     setError(null);
     if (inputRef.current) {
-      inputRef.current.style.height = 'auto';
+      inputRef.current.style.height = 'auto'; // Will fall back to rows={3} height
     }
 
     const userMsg = { role: 'user', content, timestamp: new Date(), id: Date.now() };
@@ -309,7 +309,7 @@ export function AiChat() {
                   value={inputValue}
                   onChange={handleInputChange}
                   onKeyDown={handleKeyDown}
-                  rows={1}
+                  rows={3}
                   disabled={isLoading}
                 />
                 <div className={styles.composerActions}>
