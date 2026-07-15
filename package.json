@@ -11,6 +11,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@marsidev/react-turnstile": "^1.5.3",
     "@prisma/adapter-pg": "^5.22.0",
     "@prisma/client": "^5.22.0",
     "@prisma/extension-accelerate": "^3.0.1",

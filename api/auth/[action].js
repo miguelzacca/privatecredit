@@ -30,6 +30,25 @@ function validateEmail(email) {
   return null
 }
 
+async function verifyTurnstile(token) {
+  const secret = process.env.TURNSTILE_SECRET_KEY
+  if (!secret) return true // bypass if no secret configured
+  if (!token) return false
+
+  try {
+    const res = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: `secret=${encodeURIComponent(secret)}&response=${encodeURIComponent(token)}`
+    })
+    const data = await res.json()
+    return data.success
+  } catch (err) {
+    console.error('Turnstile verification error:', err)
+    return false
+  }
+}
+
 function createTransporter() {
   return nodemailer.createTransport({
     host: process.env.SMTP_HOST,
@@ -220,7 +239,13 @@ export default async function handler(req, res) {
 
   if (req.method === 'POST') {
     if (action === 'magic-send') {
-      const { email, name, isRegister } = req.body
+      const { email, name, isRegister, turnstileToken } = req.body
+      
+      const isTurnstileValid = await verifyTurnstile(turnstileToken)
+      if (!isTurnstileValid) {
+        return res.status(400).json({ error: 'Falha na verificação de segurança. Tente novamente.' })
+      }
+
       const emailError = validateEmail(email)
       if (emailError) return res.status(400).json({ error: emailError })
 
@@ -324,8 +349,13 @@ export default async function handler(req, res) {
     }
 
     if (action === 'google') {
-      const { token } = req.body
+      const { token, turnstileToken } = req.body
       if (!token) return res.status(400).json({ error: 'Token is required' })
+
+      const isTurnstileValid = await verifyTurnstile(turnstileToken)
+      if (!isTurnstileValid) {
+        return res.status(400).json({ error: 'Falha na verificação de segurança. Tente novamente.' })
+      }
 
       try {
         const userInfoRes = await fetch(

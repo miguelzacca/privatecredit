@@ -3,14 +3,15 @@ import { motion } from 'framer-motion';
 import { Loader2 } from 'lucide-react';
 import styles from './GoogleButton.module.css';
 
-export default function GoogleButton({ onClick, loading, label = 'Continue com Google', loadingLabel = 'Conectando...' }) {
+export default function GoogleButton({ onClick, loading, label = 'Continue com Google', loadingLabel = 'Conectando...', disabled }) {
   return (
     <motion.button
-      whileHover={{ scale: 1.01 }}
-      whileTap={{ scale: 0.98 }}
+      whileHover={{ scale: disabled || loading ? 1 : 1.01 }}
+      whileTap={{ scale: disabled || loading ? 1 : 0.98 }}
       onClick={onClick}
-      disabled={loading}
+      disabled={loading || disabled}
       className={styles.button}
+      style={{ opacity: disabled ? 0.6 : 1, cursor: disabled ? 'not-allowed' : 'pointer' }}
     >
       <div className={styles.buttonHoverOverlay} />
       {loading ? (

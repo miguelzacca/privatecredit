@@ -6,6 +6,7 @@ import GoogleButton from '../../components/GoogleButton';
 import axios from 'axios';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowRight, Mail, AlertCircle, ShieldCheck, Check } from 'lucide-react';
+import { Turnstile } from '@marsidev/react-turnstile';
 import styles from './Login.module.css';
 
 function isValidEmail(v) {
@@ -27,6 +28,7 @@ async function getCsrf() {
 export default function Login() {
   const [googleLoading, setGoogleLoading] = useState(false);
   const [error, setError] = useState('');
+  const [turnstileToken, setTurnstileToken] = useState('');
 
   // Email-link state
   const [email, setEmail] = useState('');
@@ -63,7 +65,10 @@ export default function Login() {
     setGoogleLoading(true);
     setError('');
     try {
-      const res = await axios.post('/api/auth/google', { token: tokenResponse.access_token });
+      const res = await axios.post('/api/auth/google', { 
+        token: tokenResponse.access_token,
+        turnstileToken 
+      });
       login(res.data.user);
       if (res.data.user && res.data.user.profile) {
         navigate(`/dashboard/${res.data.user.profile}`);
@@ -93,6 +98,7 @@ export default function Login() {
       await axios.post('/api/auth/magic-send', {
         email: email.trim().toLowerCase(),
         isRegister: false,
+        turnstileToken
       }, { headers: { 'x-csrf-token': csrf } });
       setEmailSent(true);
       setCooldown(30);
@@ -207,9 +213,19 @@ export default function Login() {
                 </motion.div>
               )}
 
+              <div style={{ marginBottom: '20px', display: 'flex', justifyContent: 'center' }}>
+                <Turnstile
+                  siteKey={import.meta.env.VITE_TURNSTILE_SITE_KEY}
+                  onSuccess={(token) => setTurnstileToken(token)}
+                  onError={() => setError('Erro ao carregar verificação de segurança.')}
+                  options={{ theme: 'light' }}
+                />
+              </div>
+
               <GoogleButton
                 onClick={() => loginWithGoogle()}
                 loading={googleLoading}
+                disabled={!turnstileToken}
                 label="Continuar com Google"
               />
 
@@ -247,11 +263,12 @@ export default function Login() {
                 </div>
 
                 <motion.button
-                  whileHover={{ scale: 1.01 }}
-                  whileTap={{ scale: 0.98 }}
+                  whileHover={{ scale: turnstileToken && emailValid ? 1.01 : 1 }}
+                  whileTap={{ scale: turnstileToken && emailValid ? 0.98 : 1 }}
                   type="submit"
-                  disabled={emailLoading || (emailTouched && !emailValid)}
+                  disabled={emailLoading || (emailTouched && !emailValid) || !turnstileToken}
                   className={styles.submitBtn}
+                  style={{ opacity: !turnstileToken ? 0.6 : 1, cursor: !turnstileToken ? 'not-allowed' : 'pointer' }}
                 >
                   {emailLoading ? (
                     <div className={styles.submitSpinner} />
