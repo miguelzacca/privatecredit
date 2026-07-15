@@ -32,8 +32,10 @@ export function InvestorProfileWizard({ user, onComplete }) {
     try {
       const { data } = await axios.post('/api/apifull', { cpf: val });
       if (data.status === 'sucesso' && data.dados) {
-        if (data.dados.situacaoRFB !== 'REGULAR') {
-          setError('CPF Irregular na Receita Federal. É necessário regularizar antes de operar.');
+        const situacao = (data.dados.situacaoRFB || data.dados.situacaoCadastral || data.dados.situacao || data.dados.situacao_cadastral || '').toUpperCase();
+        
+        if (situacao && situacao !== 'REGULAR') {
+          setError(`CPF Irregular na Receita Federal (${situacao}). É necessário regularizar antes de operar.`);
         } else {
           setIdentityData(data.dados);
         }
@@ -48,8 +50,11 @@ export function InvestorProfileWizard({ user, onComplete }) {
   };
 
   React.useEffect(() => {
-    if (user?.cpf && user.cpf.length === 11) {
-      fetchCpf(user.cpf);
+    if (user?.cpf) {
+      const cleanCpf = user.cpf.replace(/\D/g, '');
+      if (cleanCpf.length === 11) {
+        fetchCpf(cleanCpf);
+      }
     }
   }, [user]);
   
@@ -212,19 +217,27 @@ export function InvestorProfileWizard({ user, onComplete }) {
               </div>
             )}
 
-            {identityData && identityData.situacaoRFB === 'REGULAR' && (
-              <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className={styles.cardsGrid}>
-                <div className={styles.infoCard}>
-                  <span className={styles.infoCardLabel}>Nome Completo</span>
-                  <span className={styles.infoCardValue}>{identityData.nome}</span>
+            {identityData && ((identityData.situacaoRFB || identityData.situacaoCadastral || identityData.situacao || '').toUpperCase() === 'REGULAR') && (
+              <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className={styles.infoGrid}>
+                <div className={styles.infoItem}>
+                  <span className={styles.infoLabel}>Nome</span>
+                  <span className={styles.infoValue}>{identityData.nome || identityData.nomeRazao || '-'}</span>
                 </div>
-                <div className={styles.infoCard}>
-                  <span className={styles.infoCardLabel}>Data de Nascimento</span>
-                  <span className={styles.infoCardValue}>{identityData.dataNascimento}</span>
+                <div className={styles.infoItem}>
+                  <span className={styles.infoLabel}>Data de Nascimento</span>
+                  <span className={styles.infoValue}>{identityData.nascimento || identityData.nascFund || identityData.dataNascimento || '-'}</span>
                 </div>
-                <div className={styles.infoCard}>
-                  <span className={styles.infoCardLabel}>Situação RFB</span>
-                  <span className={styles.infoCardValue} style={{ color: '#059669', fontWeight: 600 }}>{identityData.situacaoRFB}</span>
+                <div className={styles.infoItem}>
+                  <span className={styles.infoLabel}>Nome da Mãe</span>
+                  <span className={styles.infoValue}>{identityData.mae || identityData.nomeMae || '-'}</span>
+                </div>
+                <div className={styles.infoItem}>
+                  <span className={styles.infoLabel}>Situação RFB</span>
+                  <span className={styles.infoValue}>
+                    <div className={styles.badgeSuccess}>
+                      <Check size={14} /> {identityData.situacaoRFB || identityData.situacaoCadastral || identityData.situacao || 'Regular'}
+                    </div>
+                  </span>
                 </div>
               </motion.div>
             )}
