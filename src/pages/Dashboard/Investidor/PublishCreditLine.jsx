@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect, useCallback } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, ArrowRight, ArrowLeft, Building2, HardHat, Briefcase, Truck, User, FileText, Home, BadgeDollarSign, ShieldCheck, FileSignature, AlertCircle, CheckCircle2, Loader2, Landmark } from 'lucide-react';
+import { X, ArrowRight, ArrowLeft, Building2, HardHat, Briefcase, Truck, User, FileText, Home, BadgeDollarSign, ShieldCheck, FileSignature, AlertCircle, CheckCircle2, Loader2, Landmark, Save } from 'lucide-react';
 import axios from 'axios';
 import styles from './PublishCreditLine.module.css';
 
@@ -30,6 +30,9 @@ const PremiumToggle = ({ checked, onChange }) => (
 
 export function PublishCreditLine() {
   const navigate = useNavigate();
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  const editId = queryParams.get('edit');
   
   // State Machine
   const [step, setStep] = useState(1);
@@ -44,8 +47,16 @@ export function PublishCreditLine() {
   const [selectedSegments, setSelectedSegments] = useState([]);
   const [selectedGuarantees, setSelectedGuarantees] = useState([]);
 
+  // Original Data for Comparison
+  const [originalData, setOriginalData] = useState(null);
+
   const [isPublishing, setIsPublishing] = useState(false);
   const [validationStep, setValidationStep] = useState(0);
+  const [isLoading, setIsLoading] = useState(!!editId);
+
+  // Autosave status
+  const [lastSaved, setLastSaved] = useState(null);
+  const [isSaving, setIsSaving] = useState(false);
 
   // Constants
   const segments = [
@@ -64,7 +75,62 @@ export function PublishCreditLine() {
     { id: 'nenhuma', title: 'Sem Garantia', desc: 'Clean, maior risco', icon: AlertCircle },
   ];
 
-  // Helpers
+  useEffect(() => {
+    if (editId) {
+      axios.get(`/api/credit-lines/${editId}`)
+        .then(res => {
+          const data = res.data.data;
+          setCapital(data.capital);
+          setInterestRate(data.interestRate);
+          setDuration(data.duration);
+          setAmortization(data.amortization);
+          setNegotiation(data.negotiation);
+          
+          // Map tags back to IDs
+          const sIds = data.rawSegments.map(s => segments.find(seg => seg.title === s)?.id).filter(Boolean);
+          setSelectedSegments(sIds);
+          
+          const gIds = data.rawGuarantees.map(g => guarantees.find(gar => gar.title === g)?.id).filter(Boolean);
+          setSelectedGuarantees(gIds);
+
+          setOriginalData(data);
+          setIsLoading(false);
+        })
+        .catch(err => {
+          console.error(err);
+          alert('Erro ao carregar linha.');
+          navigate('/dashboard/investidor');
+        });
+    }
+  }, [editId, navigate]);
+
+  // Autosave Logic
+  useEffect(() => {
+    if (!editId || isLoading || isPublishing) return;
+
+    const timeoutId = setTimeout(async () => {
+      setIsSaving(true);
+      try {
+        await axios.put(`/api/credit-lines/${editId}`, {
+          capital,
+          interestRate,
+          duration,
+          amortization,
+          negotiation,
+          segments: selectedSegments.map(id => segments.find(s => s.id === id)?.title),
+          guarantees: selectedGuarantees.map(id => guarantees.find(g => g.id === id)?.title),
+        });
+        setLastSaved(new Date());
+      } catch (err) {
+        console.error('Autosave failed', err);
+      } finally {
+        setIsSaving(false);
+      }
+    }, 1500);
+
+    return () => clearTimeout(timeoutId);
+  }, [capital, interestRate, duration, amortization, negotiation, selectedSegments, selectedGuarantees, editId, isLoading, isPublishing]);
+
   const formatCurrency = (value) => {
     return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', minimumFractionDigits: 0 }).format(value).replace('R$', '').trim();
   };
@@ -85,16 +151,24 @@ export function PublishCreditLine() {
     if (step > 1) setStep(step - 1);
   };
 
+  const hasChanges = () => {
+    if (!originalData) return false;
+    return capital !== originalData.capital ||
+           interestRate !== originalData.interestRate ||
+           duration !== originalData.duration ||
+           amortization !== originalData.amortization ||
+           negotiation !== originalData.negotiation ||
+           JSON.stringify(selectedSegments.sort()) !== JSON.stringify(originalData.rawSegments.map(s => segments.find(seg => seg.title === s)?.id).filter(Boolean).sort()) ||
+           JSON.stringify(selectedGuarantees.sort()) !== JSON.stringify(originalData.rawGuarantees.map(g => guarantees.find(gar => gar.title === g)?.id).filter(Boolean).sort());
+  };
+
   const handlePublish = async () => {
     setIsPublishing(true);
     
-    // Simulate validation steps
-    setTimeout(() => setValidationStep(1), 1000); // Validating structure
-    setTimeout(() => setValidationStep(2), 2500); // Checking conditions
+    setTimeout(() => setValidationStep(1), 1000); 
+    setTimeout(() => setValidationStep(2), 2500); 
 
     try {
-      // Import axios if not done globally (or we'll just add it to the top of file)
-      // Save to real database
       const payload = {
         capital,
         interestRate,
@@ -105,27 +179,30 @@ export function PublishCreditLine() {
         guarantees: selectedGuarantees.map(id => guarantees.find(g => g.id === id)?.title),
       };
       
-      const res = await axios.post('/api/credit-lines', payload);
-      
-      if (res.status !== 201) {
-        console.error('Failed to publish credit line');
+      if (editId) {
+        if (hasChanges()) {
+          payload.historyEvent = {
+            action: 'Condições Alteradas',
+            description: 'As condições da linha de crédito foram atualizadas pelo investidor.'
+          };
+        }
+        await axios.put(`/api/credit-lines/${editId}`, payload);
+      } else {
+        await axios.post('/api/credit-lines', payload);
       }
-
-      setValidationStep(3); // Ready
       
-      // Final redirect
+      setValidationStep(3); 
+      
       setTimeout(() => {
-        navigate('/dashboard/marketplace');
+        navigate(editId ? `/dashboard/investidor/manage/${editId}` : '/dashboard/marketplace');
       }, 1500);
       
     } catch (err) {
       console.error('Error publishing:', err);
-      // fallback just in case
-      setTimeout(() => navigate('/dashboard/marketplace'), 1500);
+      setTimeout(() => navigate('/dashboard/investidor'), 1500);
     }
   };
 
-  // Variants for step transitions
   const stepVariants = {
     initial: (direction) => ({
       opacity: 0,
@@ -146,17 +223,19 @@ export function PublishCreditLine() {
     })
   };
 
-  // Determine direction for animation
   const [[page, direction], setPage] = useState([1, 0]);
   useEffect(() => {
     setPage([step, step > page ? 1 : -1]);
   }, [step]);
 
+  if (isLoading) {
+    return <div style={{display:'flex',justifyContent:'center',padding:'64px'}}>Carregando editor...</div>;
+  }
+
   return (
     <div className={styles.container}>
-      {/* Header & Progress */}
       <header className={styles.header}>
-        <button className={styles.closeBtn} onClick={() => navigate('/dashboard/investidor')}>
+        <button className={styles.closeBtn} onClick={() => navigate(editId ? `/dashboard/investidor/manage/${editId}` : '/dashboard/investidor')}>
           <X size={16} /> Fechar
         </button>
         
@@ -179,10 +258,16 @@ export function PublishCreditLine() {
           })}
         </div>
         
-        <div style={{ width: '80px' }} /> {/* Spacer to balance flex-between */}
+        {/* Autosave Indicator */}
+        <div style={{ width: '150px', display: 'flex', justifyContent: 'flex-end', fontSize: '13px', color: '#666', alignItems: 'center', gap: '6px' }}>
+          {editId && (
+            isSaving ? <><Loader2 size={14} className="animate-spin" /> Salvando...</>
+            : lastSaved ? <><Save size={14} /> Salvo {lastSaved.getHours().toString().padStart(2, '0')}:{lastSaved.getMinutes().toString().padStart(2, '0')}</>
+            : null
+          )}
+        </div>
       </header>
 
-      {/* Main Content */}
       <main className={styles.contentArea}>
         <AnimatePresence mode="wait" custom={direction}>
           {step === 1 && (
@@ -204,6 +289,12 @@ export function PublishCreditLine() {
                       {formatCurrency(capital)}
                     </motion.div>
                   </div>
+
+                  {editId && originalData && capital !== originalData.capital && (
+                    <div style={{ color: '#64748b', fontSize: '14px', marginBottom: '16px' }}>
+                      Valor original: R$ {formatCurrency(originalData.capital)}
+                    </div>
+                  )}
 
                   <input 
                     type="range" 
@@ -234,251 +325,260 @@ export function PublishCreditLine() {
                 <p className={styles.stepSubtitle}>Estabeleça as regras financeiras da operação.</p>
 
                 <div className={styles.conditionsGrid}>
-                  <div className={styles.conditionBlock}>
+                  <div className={styles.conditionBlock} style={{ border: editId && originalData && interestRate !== originalData.interestRate ? '1px solid #3b82f6' : undefined }}>
                     <div className={styles.blockHeader}>
                       <span className={styles.blockTitle}>Taxa de juros (ao mês)</span>
-                      <motion.div 
-                        key={interestRate}
-                        initial={{ y: -10, opacity: 0 }}
-                        animate={{ y: 0, opacity: 1 }}
-                        className={styles.blockValue}
-                      >
-                        {interestRate.toFixed(2)}<span>%</span>
-                      </motion.div>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        {editId && originalData && interestRate !== originalData.interestRate && (
+                          <span style={{ fontSize: '13px', color: '#94a3b8', textDecoration: 'line-through' }}>{originalData.interestRate.toFixed(2)}%</span>
+                        )}
+                        <motion.div 
+                          key={interestRate}
+                          initial={{ y: -10, opacity: 0 }}
+                          animate={{ y: 0, opacity: 1 }}
+                          className={styles.blockValue}
+                        >
+                          {interestRate.toFixed(2)}<span>%</span>
+                        </motion.div>
+                      </div>
                     </div>
                     <input 
                       type="range" min="0.5" max="10.0" step="0.1" 
                       value={interestRate} onChange={(e) => setInterestRate(Number(e.target.value))}
                       className={styles.capitalSlider} style={{ maxWidth: '100%' }}
                     />
-                    <div className={styles.impactBadge} style={{ background: interestRate < 2 ? '#f0fdf4' : interestRate > 5 ? '#fef2f2' : '#f8fafc', color: interestRate < 2 ? '#166534' : interestRate > 5 ? '#991b1b' : '#334155' }}>
-                      {interestRate < 2 ? 'Excelente competitividade' : interestRate > 5 ? 'Retorno elevado (Alto risco)' : 'Taxa equilibrada'}
-                    </div>
                   </div>
 
-                  <div className={styles.conditionBlock}>
+                  <div className={styles.conditionBlock} style={{ border: editId && originalData && duration !== originalData.duration ? '1px solid #3b82f6' : undefined }}>
                     <div className={styles.blockHeader}>
                       <span className={styles.blockTitle}>Prazo máximo</span>
                     </div>
                     <div className={styles.chipsGrid}>
                       {[12, 24, 36, 48, 60].map(m => (
-                        <div 
-                          key={m} 
-                          onClick={() => setDuration(m)}
-                          className={`${styles.chip} ${duration === m ? styles.active : ''}`}
-                        >
-                          {m} meses
-                        </div>
-                      ))}
-                    </div>
-                  </div>
+                         <div 
+                         key={m} 
+                         onClick={() => setDuration(m)}
+                         className={`${styles.chip} ${duration === m ? styles.active : ''}`}
+                       >
+                         {m} meses
+                       </div>
+                     ))}
+                   </div>
+                 </div>
 
-                  <div className={styles.toggleRow}>
-                    <div className={styles.toggleInfo}>
-                      <span className={styles.toggleTitle}>Amortização antecipada</span>
-                      <span className={styles.toggleDesc}>Permitir pagamento antes do prazo sem multa.</span>
-                    </div>
-                    <PremiumToggle checked={amortization} onChange={setAmortization} />
-                  </div>
+                 <div className={styles.toggleRow}>
+                   <div className={styles.toggleInfo}>
+                     <span className={styles.toggleTitle}>Amortização antecipada</span>
+                     <span className={styles.toggleDesc}>Permitir pagamento antes do prazo sem multa.</span>
+                   </div>
+                   <PremiumToggle checked={amortization} onChange={setAmortization} />
+                 </div>
 
-                  <div className={styles.toggleRow}>
-                    <div className={styles.toggleInfo}>
-                      <span className={styles.toggleTitle}>Aceita negociação</span>
-                      <span className={styles.toggleDesc}>Tomadores podem sugerir taxas ou prazos diferentes.</span>
-                    </div>
-                    <PremiumToggle checked={negotiation} onChange={setNegotiation} />
-                  </div>
-                </div>
-              </div>
-            </motion.div>
-          )}
+                 <div className={styles.toggleRow}>
+                   <div className={styles.toggleInfo}>
+                     <span className={styles.toggleTitle}>Aceita negociação</span>
+                     <span className={styles.toggleDesc}>Tomadores podem sugerir taxas ou prazos diferentes.</span>
+                   </div>
+                   <PremiumToggle checked={negotiation} onChange={setNegotiation} />
+                 </div>
+               </div>
+             </div>
+           </motion.div>
+         )}
 
-          {step === 3 && (
-            <motion.div key="step3" custom={direction} variants={stepVariants} initial="initial" animate="animate" exit="exit" className={`${styles.stepWrapper} ${styles.active}`}>
-              <div className={styles.stepContent}>
-                <h1 className={styles.stepTitle}>Quem pode solicitar?</h1>
-                <p className={styles.stepSubtitle}>Selecione os segmentos alvo para esta linha de crédito.</p>
+         {step === 3 && (
+           <motion.div key="step3" custom={direction} variants={stepVariants} initial="initial" animate="animate" exit="exit" className={`${styles.stepWrapper} ${styles.active}`}>
+             <div className={styles.stepContent}>
+               <h1 className={styles.stepTitle}>Quem pode solicitar?</h1>
+               <p className={styles.stepSubtitle}>Selecione os segmentos alvo para esta linha de crédito.</p>
 
-                <div className={styles.cardsGrid}>
-                  {segments.map(seg => {
-                    const isSelected = selectedSegments.includes(seg.id);
-                    const Icon = seg.icon;
-                    return (
-                      <div 
-                        key={seg.id} 
-                        className={`${styles.premiumCard} ${isSelected ? styles.selected : ''}`}
-                        onClick={() => toggleArrayItem(selectedSegments, setSelectedSegments, seg.id)}
-                      >
-                        <div className={styles.cardIconWrapper}>
-                          <Icon size={28} strokeWidth={1.5} />
-                        </div>
-                        <span className={styles.cardTitle}>{seg.title}</span>
-                        <span className={styles.cardDesc}>{seg.desc}</span>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-            </motion.div>
-          )}
+               <div className={styles.cardsGrid}>
+                 {segments.map(seg => {
+                   const isSelected = selectedSegments.includes(seg.id);
+                   const Icon = seg.icon;
+                   return (
+                     <div 
+                       key={seg.id} 
+                       className={`${styles.premiumCard} ${isSelected ? styles.selected : ''}`}
+                       onClick={() => toggleArrayItem(selectedSegments, setSelectedSegments, seg.id)}
+                     >
+                       <div className={styles.cardIconWrapper}>
+                         <Icon size={28} strokeWidth={1.5} />
+                       </div>
+                       <span className={styles.cardTitle}>{seg.title}</span>
+                       <span className={styles.cardDesc}>{seg.desc}</span>
+                     </div>
+                   );
+                 })}
+               </div>
+             </div>
+           </motion.div>
+         )}
 
-          {step === 4 && (
-            <motion.div key="step4" custom={direction} variants={stepVariants} initial="initial" animate="animate" exit="exit" className={`${styles.stepWrapper} ${styles.active}`}>
-              <div className={styles.stepContent}>
-                <h1 className={styles.stepTitle}>Garantias exigidas</h1>
-                <p className={styles.stepSubtitle}>Quais garantias você exige para aprovar as operações?</p>
+         {step === 4 && (
+           <motion.div key="step4" custom={direction} variants={stepVariants} initial="initial" animate="animate" exit="exit" className={`${styles.stepWrapper} ${styles.active}`}>
+             <div className={styles.stepContent}>
+               <h1 className={styles.stepTitle}>Garantias exigidas</h1>
+               <p className={styles.stepSubtitle}>Quais garantias você exige para aprovar as operações?</p>
 
-                <div className={styles.cardsGrid}>
-                  {guarantees.map(gar => {
-                    const isSelected = selectedGuarantees.includes(gar.id);
-                    const Icon = gar.icon;
-                    return (
-                      <div 
-                        key={gar.id} 
-                        className={`${styles.premiumCard} ${isSelected ? styles.selected : ''}`}
-                        onClick={() => toggleArrayItem(selectedGuarantees, setSelectedGuarantees, gar.id)}
-                      >
-                        <div className={styles.cardIconWrapper}>
-                          <Icon size={28} strokeWidth={1.5} />
-                        </div>
-                        <span className={styles.cardTitle}>{gar.title}</span>
-                        <span className={styles.cardDesc}>{gar.desc}</span>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-            </motion.div>
-          )}
+               <div className={styles.cardsGrid}>
+                 {guarantees.map(gar => {
+                   const isSelected = selectedGuarantees.includes(gar.id);
+                   const Icon = gar.icon;
+                   return (
+                     <div 
+                       key={gar.id} 
+                       className={`${styles.premiumCard} ${isSelected ? styles.selected : ''}`}
+                       onClick={() => toggleArrayItem(selectedGuarantees, setSelectedGuarantees, gar.id)}
+                     >
+                       <div className={styles.cardIconWrapper}>
+                         <Icon size={28} strokeWidth={1.5} />
+                       </div>
+                       <span className={styles.cardTitle}>{gar.title}</span>
+                       <span className={styles.cardDesc}>{gar.desc}</span>
+                     </div>
+                   );
+                 })}
+               </div>
+             </div>
+           </motion.div>
+         )}
 
-          {step === 5 && (
-            <motion.div key="step5" custom={direction} variants={stepVariants} initial="initial" animate="animate" exit="exit" className={`${styles.stepWrapper} ${styles.active}`}>
-              <div className={styles.stepContent}>
-                <h1 className={styles.stepTitle}>Revisão</h1>
-                <p className={styles.stepSubtitle}>Confira os detalhes da estrutura antes de disponibilizar ao mercado.</p>
+         {step === 5 && (
+           <motion.div key="step5" custom={direction} variants={stepVariants} initial="initial" animate="animate" exit="exit" className={`${styles.stepWrapper} ${styles.active}`}>
+             <div className={styles.stepContent}>
+               <h1 className={styles.stepTitle}>Revisão</h1>
+               <p className={styles.stepSubtitle}>Confira os detalhes da estrutura antes de disponibilizar ao mercado.</p>
 
-                <div className={styles.prospectus}>
-                  <div className={styles.prosHeader}>
-                    <div className={styles.prosLabel}>Capital Disponível</div>
-                    <div className={styles.prosAmount}>R$ {formatCurrency(capital)}</div>
-                  </div>
+               {editId && hasChanges() && (
+                 <div style={{ background: '#eff6ff', border: '1px solid #bfdbfe', padding: '16px', borderRadius: '12px', marginBottom: '24px', color: '#1e3a8a', display: 'flex', gap: '12px', alignItems: 'center' }}>
+                   <AlertCircle size={20} />
+                   <div style={{ fontSize: '14px', lineHeight: '1.5' }}>
+                     <strong>Atenção:</strong> Você fez alterações nas condições da linha. Estas mudanças afetarão apenas <strong>novas solicitações</strong>. Operações em andamento manterão as regras antigas.
+                   </div>
+                 </div>
+               )}
 
-                  <div className={styles.prosGrid}>
-                    <div className={styles.prosItem}>
-                      <span className={styles.prosItemLabel}>Taxa de Juros</span>
-                      <span className={styles.prosItemValue}>{interestRate.toFixed(2)}% a.m.</span>
-                    </div>
-                    <div className={styles.prosItem}>
-                      <span className={styles.prosItemLabel}>Prazo Máximo</span>
-                      <span className={styles.prosItemValue}>{duration} meses</span>
-                    </div>
-                    <div className={styles.prosItem} style={{ gridColumn: '1 / -1' }}>
-                      <span className={styles.prosItemLabel}>Público Alvo</span>
-                      <div className={styles.prosTags}>
-                        {selectedSegments.length > 0 
-                          ? selectedSegments.map(id => <span key={id} className={styles.prosTag}>{segments.find(s => s.id === id)?.title}</span>)
-                          : <span className={styles.prosTag}>Qualquer público</span>
-                        }
-                      </div>
-                    </div>
-                    <div className={styles.prosItem} style={{ gridColumn: '1 / -1' }}>
-                      <span className={styles.prosItemLabel}>Garantias</span>
-                      <div className={styles.prosTags}>
-                        {selectedGuarantees.length > 0 
-                          ? selectedGuarantees.map(id => <span key={id} className={styles.prosTag}>{guarantees.find(g => g.id === id)?.title}</span>)
-                          : <span className={styles.prosTag}>Sob análise</span>
-                        }
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </main>
+               <div className={styles.prospectus}>
+                 <div className={styles.prosHeader}>
+                   <div className={styles.prosLabel}>Capital Disponível</div>
+                   <div className={styles.prosAmount}>R$ {formatCurrency(capital)}</div>
+                 </div>
 
-      {/* Bottom Action Bar */}
-      <div className={styles.bottomActions}>
-        {step > 1 ? (
-          <button className={styles.backBtn} onClick={prevStep}>
-            <ArrowLeft size={16} /> Voltar
-          </button>
-        ) : <div />}
+                 <div className={styles.prosGrid}>
+                   <div className={styles.prosItem}>
+                     <span className={styles.prosItemLabel}>Taxa de Juros</span>
+                     <span className={styles.prosItemValue}>{interestRate.toFixed(2)}% a.m.</span>
+                   </div>
+                   <div className={styles.prosItem}>
+                     <span className={styles.prosItemLabel}>Prazo Máximo</span>
+                     <span className={styles.prosItemValue}>{duration} meses</span>
+                   </div>
+                   <div className={styles.prosItem} style={{ gridColumn: '1 / -1' }}>
+                     <span className={styles.prosItemLabel}>Público Alvo</span>
+                     <div className={styles.prosTags}>
+                       {selectedSegments.length > 0 
+                         ? selectedSegments.map(id => <span key={id} className={styles.prosTag}>{segments.find(s => s.id === id)?.title}</span>)
+                         : <span className={styles.prosTag}>Qualquer público</span>
+                       }
+                     </div>
+                   </div>
+                   <div className={styles.prosItem} style={{ gridColumn: '1 / -1' }}>
+                     <span className={styles.prosItemLabel}>Garantias</span>
+                     <div className={styles.prosTags}>
+                       {selectedGuarantees.length > 0 
+                         ? selectedGuarantees.map(id => <span key={id} className={styles.prosTag}>{guarantees.find(g => g.id === id)?.title}</span>)
+                         : <span className={styles.prosTag}>Sob análise</span>
+                       }
+                     </div>
+                   </div>
+                 </div>
+               </div>
+             </div>
+           </motion.div>
+         )}
+       </AnimatePresence>
+     </main>
 
-        {step < totalSteps ? (
-          <button className={styles.nextBtn} onClick={nextStep}>
-            Continuar <ArrowRight size={16} />
-          </button>
-        ) : (
-          <button className={styles.nextBtn} onClick={handlePublish} style={{ background: '#000', color: '#fff' }}>
-            Publicar Linha de Crédito
-          </button>
-        )}
-      </div>
+     <div className={styles.bottomActions}>
+       {step > 1 ? (
+         <button className={styles.backBtn} onClick={prevStep}>
+           <ArrowLeft size={16} /> Voltar
+         </button>
+       ) : <div />}
 
-      {/* Publishing Overlay Animation */}
-      <AnimatePresence>
-        {isPublishing && (
-          <motion.div 
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className={styles.validationOverlay}
-          >
-            <motion.div 
-              initial={{ scale: 0.9, y: 20 }}
-              animate={{ scale: 1, y: 0 }}
-              className={styles.valSteps}
-            >
-              <div className={`${styles.valStep} ${validationStep >= 0 ? styles.active : ''}`}>
-                <div className={styles.valIconWrapper}>
-                  {validationStep > 0 ? (
-                    <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ type: 'spring', stiffness: 400, damping: 25 }}>
-                      <CheckCircle2 size={16} />
-                    </motion.div>
-                  ) : <Loader2 size={16} className="animate-spin" />}
-                </div>
-                Validando estrutura...
-              </div>
-              <div className={`${styles.valStep} ${validationStep >= 1 ? styles.active : ''}`}>
-                <div className={styles.valIconWrapper}>
-                  {validationStep > 1 ? (
-                    <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ type: 'spring', stiffness: 400, damping: 25 }}>
-                      <CheckCircle2 size={16} />
-                    </motion.div>
-                  ) : validationStep === 1 ? <Loader2 size={16} className="animate-spin" /> : null}
-                </div>
-                Verificando condições...
-              </div>
-              <div className={`${styles.valStep} ${validationStep >= 2 ? styles.active : ''}`}>
-                <div className={styles.valIconWrapper}>
-                  {validationStep > 2 ? (
-                    <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ type: 'spring', stiffness: 400, damping: 25 }}>
-                      <CheckCircle2 size={16} />
-                    </motion.div>
-                  ) : validationStep === 2 ? <Loader2 size={16} className="animate-spin" /> : null}
-                </div>
-                Preparando disponibilidade...
-              </div>
-              
-              {validationStep >= 3 && (
-                <motion.div 
-                  initial={{ opacity: 0, scale: 0.8 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ delay: 0.2 }}
-                  style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: '48px', gap: '16px' }}
-                >
-                  <div style={{ width: '64px', height: '64px', background: '#111', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff' }}>
-                    <Landmark size={32} />
-                  </div>
-                  <span style={{ fontSize: '24px', fontWeight: '600', color: '#111' }}>Linha publicada no Marketplace</span>
-                </motion.div>
-              )}
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </div>
-  );
+       {step < totalSteps ? (
+         <button className={styles.nextBtn} onClick={nextStep}>
+           Continuar <ArrowRight size={16} />
+         </button>
+       ) : (
+         <button className={styles.nextBtn} onClick={handlePublish} style={{ background: '#000', color: '#fff' }}>
+           {editId ? 'Salvar Alterações' : 'Publicar Linha de Crédito'}
+         </button>
+       )}
+     </div>
+
+     <AnimatePresence>
+       {isPublishing && (
+         <motion.div 
+           initial={{ opacity: 0 }}
+           animate={{ opacity: 1 }}
+           exit={{ opacity: 0 }}
+           className={styles.validationOverlay}
+         >
+           <motion.div 
+             initial={{ scale: 0.9, y: 20 }}
+             animate={{ scale: 1, y: 0 }}
+             className={styles.valSteps}
+           >
+             <div className={`${styles.valStep} ${validationStep >= 0 ? styles.active : ''}`}>
+               <div className={styles.valIconWrapper}>
+                 {validationStep > 0 ? (
+                   <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ type: 'spring', stiffness: 400, damping: 25 }}>
+                     <CheckCircle2 size={16} />
+                   </motion.div>
+                 ) : <Loader2 size={16} className="animate-spin" />}
+               </div>
+               Validando estrutura...
+             </div>
+             <div className={`${styles.valStep} ${validationStep >= 1 ? styles.active : ''}`}>
+               <div className={styles.valIconWrapper}>
+                 {validationStep > 1 ? (
+                   <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ type: 'spring', stiffness: 400, damping: 25 }}>
+                     <CheckCircle2 size={16} />
+                   </motion.div>
+                 ) : validationStep === 1 ? <Loader2 size={16} className="animate-spin" /> : null}
+               </div>
+               Verificando condições...
+             </div>
+             <div className={`${styles.valStep} ${validationStep >= 2 ? styles.active : ''}`}>
+               <div className={styles.valIconWrapper}>
+                 {validationStep > 2 ? (
+                   <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ type: 'spring', stiffness: 400, damping: 25 }}>
+                     <CheckCircle2 size={16} />
+                   </motion.div>
+                 ) : validationStep === 2 ? <Loader2 size={16} className="animate-spin" /> : null}
+               </div>
+               {editId ? 'Atualizando parâmetros...' : 'Preparando disponibilidade...'}
+             </div>
+             
+             {validationStep >= 3 && (
+               <motion.div 
+                 initial={{ opacity: 0, scale: 0.8 }}
+                 animate={{ opacity: 1, scale: 1 }}
+                 transition={{ delay: 0.2 }}
+                 style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: '48px', gap: '16px' }}
+               >
+                 <div style={{ width: '64px', height: '64px', background: '#111', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff' }}>
+                   <Landmark size={32} />
+                 </div>
+                 <span style={{ fontSize: '24px', fontWeight: '600', color: '#111' }}>{editId ? 'Alterações salvas' : 'Linha publicada no Marketplace'}</span>
+               </motion.div>
+             )}
+           </motion.div>
+         </motion.div>
+       )}
+     </AnimatePresence>
+   </div>
+ );
 }

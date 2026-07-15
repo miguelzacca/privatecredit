@@ -64,6 +64,8 @@ model CreditLine {
   negotiation   Boolean  @default(false)
   segments      String   // JSON string or comma-separated
   guarantees    String   // JSON string or comma-separated
+  status        String   @default("ACTIVE") // ACTIVE, PAUSED, CLOSED
+  history       String?  @db.Text // JSON string for change history
   userId        String
   user          User     @relation(fields: [userId], references: [id])
   createdAt     DateTime @default(now())

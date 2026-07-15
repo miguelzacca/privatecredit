@@ -1,6 +1,6 @@
-import prisma from '../_lib/prisma.js';
-import { verifyAuth } from '../_lib/auth.js';
-import { verifyCsrf } from '../_lib/csrf.js';
+import prisma from '../../_lib/prisma.js';
+import { verifyAuth } from '../../_lib/auth.js';
+import { verifyCsrf } from '../../_lib/csrf.js';
 
 export default async function handler(req, res) {
   // Validate CSRF token
@@ -54,6 +54,8 @@ export default async function handler(req, res) {
         rawSegments: parsedSegments,
         rawGuarantees: parsedGuarantees,
         userId: creditLine.userId,
+        status: creditLine.status,
+        history: creditLine.history ? JSON.parse(creditLine.history) : [],
       };
 
       return res.status(200).json({ data: formatted });
@@ -91,6 +93,74 @@ export default async function handler(req, res) {
     } catch (error) {
       console.error('Error deleting credit line:', error);
       return res.status(500).json({ error: 'Failed to delete' });
+    }
+  }
+
+  if (req.method === 'PUT' || req.method === 'PATCH') {
+    const authData = verifyAuth(req);
+    if (!authData) {
+      return res.status(401).json({ error: 'Unauthorized' });
+    }
+
+    try {
+      // Check if it belongs to user
+      const existingLine = await prisma.creditLine.findUnique({
+        where: { id }
+      });
+
+      if (!existingLine) {
+        return res.status(404).json({ error: 'Not found' });
+      }
+
+      if (existingLine.userId !== authData.userId) {
+        return res.status(403).json({ error: 'Forbidden' });
+      }
+
+      const { 
+        capital, 
+        interestRate, 
+        duration, 
+        amortization, 
+        negotiation, 
+        segments, 
+        guarantees,
+        status,
+        historyEvent
+      } = req.body;
+
+      // Prepare data
+      const dataToUpdate = {};
+      if (capital !== undefined) dataToUpdate.capital = capital;
+      if (interestRate !== undefined) dataToUpdate.interestRate = interestRate;
+      if (duration !== undefined) dataToUpdate.duration = duration;
+      if (amortization !== undefined) dataToUpdate.amortization = amortization;
+      if (negotiation !== undefined) dataToUpdate.negotiation = negotiation;
+      if (segments !== undefined) dataToUpdate.segments = JSON.stringify(segments);
+      if (guarantees !== undefined) dataToUpdate.guarantees = JSON.stringify(guarantees);
+      if (status !== undefined) dataToUpdate.status = status;
+
+      // Handle history
+      if (historyEvent) {
+        let currentHistory = [];
+        if (existingLine.history) {
+          try { currentHistory = JSON.parse(existingLine.history); } catch(e) {}
+        }
+        currentHistory.push({
+          ...historyEvent,
+          timestamp: new Date().toISOString()
+        });
+        dataToUpdate.history = JSON.stringify(currentHistory);
+      }
+
+      const updatedLine = await prisma.creditLine.update({
+        where: { id },
+        data: dataToUpdate
+      });
+
+      return res.status(200).json({ success: true, data: updatedLine });
+    } catch (error) {
+      console.error('Error updating credit line:', error);
+      return res.status(500).json({ error: 'Failed to update credit line' });
     }
   }
 
