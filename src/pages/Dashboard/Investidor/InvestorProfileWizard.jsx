@@ -29,6 +29,7 @@ export function InvestorProfileWizard({ user, onComplete }) {
   const fetchCpf = async (val) => {
     setIsLoading(true);
     setError('');
+    setIdentityData(null);
     try {
       const { data } = await axios.post('/api/apifull', { cpf: val });
       if (data.status === 'sucesso' && data.dados) {
@@ -133,7 +134,7 @@ export function InvestorProfileWizard({ user, onComplete }) {
   };
 
   const canProceed = () => {
-    if (step === 1) return identityData && identityData.situacaoRFB === 'REGULAR';
+    if (step === 1) return !!identityData && !error;
     if (step === 2) return addressData.street && addressData.number && addressData.city;
     if (step === 3) return bankData.bank && bankData.agency && bankData.account && bankData.accountType;
     if (step === 4) return Object.values(declarations).every(v => v);
