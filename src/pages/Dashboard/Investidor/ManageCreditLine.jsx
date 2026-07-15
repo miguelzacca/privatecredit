@@ -8,6 +8,8 @@ import {
 import axios from 'axios';
 import styles from './InvestidorDashboard.module.css';
 
+import { Skeleton } from '../../../components/Skeleton';
+
 export function ManageCreditLine() {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -79,8 +81,52 @@ export function ManageCreditLine() {
 
   if (loading) {
     return (
-      <div style={{ display: 'flex', justifyContent: 'center', padding: '64px' }}>
-        <p>Carregando gestão premium da linha...</p>
+      <div style={{ padding: '24px' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '32px' }}>
+          <div>
+            <Skeleton width="100px" height="20px" style={{ marginBottom: '16px' }} />
+            <Skeleton width="250px" height="40px" style={{ marginBottom: '8px' }} />
+            <Skeleton width="150px" height="20px" />
+          </div>
+          <div style={{ display: 'flex', gap: '12px' }}>
+            <Skeleton width="140px" height="44px" borderRadius="12px" />
+            <Skeleton width="120px" height="44px" borderRadius="12px" />
+            <Skeleton width="120px" height="44px" borderRadius="12px" />
+          </div>
+        </div>
+        
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '20px', marginBottom: '32px' }}>
+          {[1, 2, 3].map(i => (
+            <div key={i} style={{ background: '#fff', padding: '24px', borderRadius: '24px', border: '1px solid #f1f5f9' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '16px' }}>
+                <Skeleton width="120px" height="20px" />
+                <Skeleton width="32px" height="32px" borderRadius="10px" />
+              </div>
+              <Skeleton width="80%" height="32px" style={{ marginBottom: '12px' }} />
+              <Skeleton width="50%" height="16px" />
+            </div>
+          ))}
+        </div>
+        
+        <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '24px' }}>
+          <div style={{ background: '#fff', padding: '32px', borderRadius: '24px', border: '1px solid #f1f5f9' }}>
+            <Skeleton width="200px" height="24px" style={{ marginBottom: '24px' }} />
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px' }}>
+              <div><Skeleton width="100px" height="16px" style={{ marginBottom: '8px' }} /><Skeleton width="120px" height="24px" /></div>
+              <div><Skeleton width="100px" height="16px" style={{ marginBottom: '8px' }} /><Skeleton width="120px" height="24px" /></div>
+            </div>
+          </div>
+          <div style={{ background: '#fff', padding: '32px', borderRadius: '24px', border: '1px solid #f1f5f9' }}>
+            <Skeleton width="120px" height="24px" style={{ marginBottom: '24px' }} />
+            <div style={{ display: 'flex', gap: '16px', marginBottom: '24px' }}>
+              <Skeleton width="24px" height="24px" borderRadius="50%" />
+              <div>
+                <Skeleton width="120px" height="16px" style={{ marginBottom: '8px' }} />
+                <Skeleton width="180px" height="14px" />
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     );
   }

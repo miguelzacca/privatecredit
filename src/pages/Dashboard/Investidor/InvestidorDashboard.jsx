@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import { TrendingUp, Wallet, ArrowUpRight, Plus, Activity, Clock, DollarSign, ChevronRight } from 'lucide-react';
 import axios from 'axios';
 import { useAuth } from '../../../contexts/AuthContext';
+import { Skeleton } from '../../../components/Skeleton';
 import styles from './InvestidorDashboard.module.css';
 
 const containerVariants = {
@@ -20,7 +21,7 @@ const itemVariants = {
 };
 
 export function InvestidorDashboard() {
-  const [filter, setFilter] = useState('ativas');
+  const [filter, setFilter] = useState('todas');
   const [creditLines, setCreditLines] = useState([]);
   const [rawLines, setRawLines] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -38,7 +39,7 @@ export function InvestidorDashboard() {
             available: line.maxAmount,
             rate: line.rate,
             term: line.term,
-            status: 'ativa', // Fixed as active for demo
+            status: line.status ? line.status.toLowerCase() : 'ativa',
             tags: line.tags
           }));
           setCreditLines(formatted);
@@ -67,7 +68,7 @@ export function InvestidorDashboard() {
 
   const filteredLines = creditLines.filter(line => {
     if (filter === 'todas') return true;
-    return line.status === filter || (filter === 'ativas' && line.status === 'ativa') || (filter === 'pausadas' && line.status === 'pausada');
+    return line.status === filter || (filter === 'ativas' && line.status === 'active') || (filter === 'pausadas' && line.status === 'paused');
   });
 
   return (
@@ -84,23 +85,36 @@ export function InvestidorDashboard() {
       </div>
 
       <div className={styles.statsGrid}>
-        {stats.map((stat, i) => (
-          <motion.div key={i} variants={itemVariants} className={styles.statCard}>
-            <div className={styles.statHeader}>
-              <div className={styles.statIcon}>
-                <stat.icon size={20} />
+        {loading ? (
+          Array.from({ length: 4 }).map((_, i) => (
+            <div key={i} className={styles.statCard} style={{ padding: '24px' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '16px' }}>
+                <Skeleton width="40px" height="40px" borderRadius="12px" />
+                <Skeleton width="60px" height="24px" borderRadius="12px" />
               </div>
-              <div className={`${styles.statTrend} ${stat.isUp ? styles.trendUp : styles.trendDown}`}>
-                {stat.trend}
-                {stat.isUp ? <ArrowUpRight size={14} /> : null}
+              <Skeleton width="120px" height="16px" style={{ marginBottom: '8px' }} />
+              <Skeleton width="160px" height="32px" />
+            </div>
+          ))
+        ) : (
+          stats.map((stat, i) => (
+            <motion.div key={i} variants={itemVariants} className={styles.statCard}>
+              <div className={styles.statHeader}>
+                <div className={styles.statIcon}>
+                  <stat.icon size={20} />
+                </div>
+                <div className={`${styles.statTrend} ${stat.isUp ? styles.trendUp : styles.trendDown}`}>
+                  {stat.trend}
+                  {stat.isUp ? <ArrowUpRight size={14} /> : null}
+                </div>
               </div>
-            </div>
-            <div>
-              <div className={styles.statLabel}>{stat.label}</div>
-              <div className={styles.statValue}>{stat.value}</div>
-            </div>
-          </motion.div>
-        ))}
+              <div>
+                <div className={styles.statLabel}>{stat.label}</div>
+                <div className={styles.statValue}>{stat.value}</div>
+              </div>
+            </motion.div>
+          ))
+        )}
       </div>
 
       <motion.div variants={itemVariants}>
@@ -128,7 +142,30 @@ export function InvestidorDashboard() {
           </div>
         </div>
 
-        {filteredLines.length === 0 ? (
+        {loading ? (
+          <div className={styles.linesGrid}>
+            {Array.from({ length: 3 }).map((_, i) => (
+              <div key={i} className={styles.lineCard} style={{ padding: '24px' }}>
+                <Skeleton width="100px" height="24px" borderRadius="20px" style={{ marginBottom: '12px' }} />
+                <Skeleton width="80%" height="24px" style={{ marginBottom: '24px' }} />
+                
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '16px', marginBottom: '24px' }}>
+                  <div><Skeleton width="60px" height="12px" style={{ marginBottom: '8px' }} /><Skeleton width="100%" height="20px" /></div>
+                  <div><Skeleton width="60px" height="12px" style={{ marginBottom: '8px' }} /><Skeleton width="100%" height="20px" /></div>
+                  <div><Skeleton width="60px" height="12px" style={{ marginBottom: '8px' }} /><Skeleton width="100%" height="20px" /></div>
+                </div>
+
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: '1px solid #f1f5f9', paddingTop: '16px' }}>
+                  <div style={{ display: 'flex', gap: '8px' }}>
+                    <Skeleton width="60px" height="24px" borderRadius="12px" />
+                    <Skeleton width="60px" height="24px" borderRadius="12px" />
+                  </div>
+                  <Skeleton width="100px" height="24px" />
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : filteredLines.length === 0 ? (
           <div style={{ textAlign: 'center', padding: '64px 24px', background: '#fff', borderRadius: '20px', border: '1px dashed rgba(0,0,0,0.1)' }}>
             <Wallet size={48} color="#ccc" style={{ marginBottom: '16px' }} />
             <h3 style={{ fontSize: '18px', fontWeight: '600', color: '#111', marginBottom: '8px' }}>Nenhuma linha de crédito encontrada</h3>
@@ -144,9 +181,9 @@ export function InvestidorDashboard() {
               <motion.div key={line.id} variants={itemVariants} className={styles.lineCard}>
               <div className={styles.lineHeader}>
                 <div>
-                  <div className={`${styles.lineStatus} ${line.status === 'pausada' ? styles.paused : ''}`}>
-                    {line.status === 'ativa' ? <Activity size={12} /> : <Clock size={12} />}
-                    {line.status === 'ativa' ? 'Disponível no Marketplace' : 'Pausada'}
+                  <div className={`${styles.lineStatus} ${line.status === 'paused' || line.status === 'pausada' ? styles.paused : ''}`}>
+                    {line.status === 'active' || line.status === 'ativa' ? <Activity size={12} /> : <Clock size={12} />}
+                    {line.status === 'active' || line.status === 'ativa' ? 'Disponível no Marketplace' : 'Pausada'}
                   </div>
                   <h3 className={styles.lineName}>{line.name}</h3>
                 </div>
@@ -173,7 +210,7 @@ export function InvestidorDashboard() {
                     <span key={i} className={styles.tag}>{tag}</span>
                   ))}
                 </div>
-                <Link to={`/dashboard/investidor/linhas/${line.id}`} className={styles.actionLink}>
+                <Link to={`/dashboard/investidor/manage/${line.id}`} className={styles.actionLink}>
                   Gerenciar <ChevronRight size={16} />
                 </Link>
               </div>

@@ -1,6 +1,6 @@
-import prisma from '../../_lib/prisma.js';
-import { verifyAuth } from '../../_lib/auth.js';
-import { verifyCsrf } from '../../_lib/csrf.js';
+import prisma from '../_lib/prisma.js';
+import { verifyAuth } from '../_lib/auth.js';
+import { verifyCsrf } from '../_lib/csrf.js';
 
 export default async function handler(req, res) {
   // Validate CSRF token

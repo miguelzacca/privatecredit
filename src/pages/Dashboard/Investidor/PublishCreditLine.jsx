@@ -28,6 +28,8 @@ const PremiumToggle = ({ checked, onChange }) => (
 
 // --- Main Component ---
 
+import { Skeleton } from '../../../components/Skeleton';
+
 export function PublishCreditLine() {
   const navigate = useNavigate();
   const location = useLocation();
@@ -229,7 +231,22 @@ export function PublishCreditLine() {
   }, [step]);
 
   if (isLoading) {
-    return <div style={{display:'flex',justifyContent:'center',padding:'64px'}}>Carregando editor...</div>;
+    return (
+      <div className={styles.container}>
+        <header className={styles.header}>
+          <Skeleton width="100px" height="24px" />
+          <div className={styles.progressContainer}>
+            <Skeleton width="300px" height="32px" borderRadius="16px" />
+          </div>
+          <Skeleton width="100px" height="24px" />
+        </header>
+        <main className={styles.contentArea} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column' }}>
+          <Skeleton width="400px" height="40px" style={{ marginBottom: '16px' }} />
+          <Skeleton width="250px" height="20px" style={{ marginBottom: '48px' }} />
+          <Skeleton width="600px" height="120px" borderRadius="24px" />
+        </main>
+      </div>
+    );
   }
 
   return (
