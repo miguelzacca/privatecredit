@@ -1,0 +1,125 @@
+.footer {
+  padding: var(--spacing-32) 0 var(--spacing-8) 0;
+  background-color: var(--color-bg-base);
+  border-top: 1px solid var(--color-border-subtle);
+}
+
+.ctaBox {
+  background: var(--color-text-primary);
+  color: var(--color-bg-base);
+  padding: var(--spacing-16) var(--spacing-8);
+  border-radius: var(--radius-2xl);
+  text-align: center;
+  margin-bottom: var(--spacing-24);
+  box-shadow: var(--shadow-xl);
+}
+
+.ctaTitle {
+  font-size: clamp(2rem, 3vw, 3rem);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  margin-bottom: var(--spacing-4);
+}
+
+.ctaDesc {
+  font-size: 1.125rem;
+  color: var(--color-text-tertiary);
+  margin-bottom: var(--spacing-8);
+}
+
+.ctaActions {
+  display: flex;
+  justify-content: center;
+  gap: var(--spacing-4);
+  flex-wrap: wrap;
+}
+
+/* Adjust button inside dark CTA */
+.ctaActions button[class*="primary"] {
+  background: var(--color-bg-base);
+  color: var(--color-text-primary);
+}
+
+.ctaActions button[class*="primary"]:hover {
+  background: var(--color-bg-alt);
+}
+
+.ctaActions button[class*="ghost"] {
+  color: var(--color-bg-alt);
+}
+
+.ctaActions button[class*="ghost"]:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--color-bg-base);
+}
+
+.bottom {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-12);
+  margin-bottom: var(--spacing-16);
+}
+
+@media (min-width: 1024px) {
+  .bottom {
+    flex-direction: row;
+    justify-content: space-between;
+  }
+}
+
+.brand {
+  max-width: 300px;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  font-weight: 700;
+  font-size: 1.25rem;
+  margin-bottom: var(--spacing-4);
+}
+
+.logoIcon {
+  color: var(--color-text-primary);
+}
+
+.brandText {
+  color: var(--color-text-secondary);
+  font-size: 0.95rem;
+}
+
+.linksGrid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-16);
+}
+
+.linksGrid h4 {
+  font-size: 0.875rem;
+  font-weight: 600;
+  margin-bottom: var(--spacing-6);
+  color: var(--color-text-primary);
+}
+
+.linksGrid a {
+  display: block;
+  font-size: 0.95rem;
+  color: var(--color-text-secondary);
+  margin-bottom: var(--spacing-3);
+  transition: color 0.2s;
+}
+
+.linksGrid a:hover {
+  color: var(--color-text-primary);
+}
+
+.copyright {
+  border-top: 1px solid var(--color-border-subtle);
+  padding-top: var(--spacing-8);
+  font-size: 0.875rem;
+  color: var(--color-text-tertiary);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}

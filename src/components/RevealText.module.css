@@ -1,0 +1,10 @@
+.reveal {
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.wordContainer {
+  display: flex;
+  flex-wrap: wrap;
+}

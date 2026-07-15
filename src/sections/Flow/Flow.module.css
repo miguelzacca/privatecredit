@@ -1,0 +1,155 @@
+.flowSection {
+  padding: var(--spacing-32) 0;
+  background-color: var(--color-bg-alt);
+  position: relative;
+}
+
+.header {
+  text-align: center;
+  max-width: 600px;
+  margin: 0 auto var(--spacing-24) auto;
+}
+
+.title {
+  font-size: clamp(2rem, 3.5vw, 3rem);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  margin-bottom: var(--spacing-4);
+}
+
+.subtitle {
+  font-size: 1.125rem;
+  color: var(--color-text-secondary);
+}
+
+.timeline {
+  position: relative;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: var(--spacing-8) 0;
+}
+
+.lineBg {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: 2px;
+  background-color: var(--color-border-default);
+  transform: translateX(-50%);
+  z-index: 0;
+}
+
+.lineFill {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 2px;
+  background-color: var(--color-text-primary);
+  transform: translateX(-50%);
+  height: 0%;
+  z-index: 1;
+}
+
+.stepWrapper {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--spacing-16);
+  position: relative;
+  z-index: 2;
+}
+
+.stepWrapper:nth-child(even) {
+  flex-direction: row-reverse;
+}
+
+.stepContent {
+  width: calc(50% - 30px);
+}
+
+.stepEmpty {
+  width: calc(50% - 30px);
+}
+
+.stepDot {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background-color: var(--color-bg-base);
+  border: 2px solid var(--color-border-default);
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 3;
+}
+
+.dotInner {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: var(--color-text-primary);
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.stepWrapper:hover .dotInner {
+  opacity: 1;
+}
+
+.stepCard {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--spacing-4);
+  padding: var(--spacing-6);
+}
+
+.stepIconBox {
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-md);
+  background: var(--color-bg-alt);
+  border: 1px solid var(--color-border-subtle);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-text-primary);
+}
+
+.stepTitle {
+  font-size: 1.125rem;
+  font-weight: 600;
+  margin-bottom: var(--spacing-2);
+}
+
+.stepDesc {
+  font-size: 0.95rem;
+  color: var(--color-text-secondary);
+}
+
+@media (max-width: 768px) {
+  .lineBg, .lineFill {
+    left: 20px;
+  }
+  
+  .stepWrapper, .stepWrapper:nth-child(even) {
+    flex-direction: row;
+  }
+  
+  .stepContent {
+    width: calc(100% - 60px);
+    margin-left: 60px;
+  }
+  
+  .stepEmpty {
+    display: none;
+  }
+  
+  .stepDot {
+    left: 20px;
+  }
+}
