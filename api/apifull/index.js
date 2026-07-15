@@ -17,7 +17,8 @@ export default async function handler(req, res) {
   }
 
   try {
-    const token = process.env.APIFULL_TOKEN || 'TOKEN_DA_API'
+    let token = process.env.APIFULL_TOKEN || 'TOKEN_DA_API'
+    token = token.replace(/^["']|["']$/g, '').trim()
     
     const response = await axios.post(
       'https://api.apifull.com.br/api/pf-dadosbasicos',

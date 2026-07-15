@@ -254,7 +254,7 @@ export function PublishCreditLine() {
 
   if (user && !user.investorProfileCompleted) {
     return (
-      <InvestorProfileWizard onComplete={() => window.location.reload()} />
+      <InvestorProfileWizard user={user} onComplete={() => window.location.reload()} />
     );
   }
 

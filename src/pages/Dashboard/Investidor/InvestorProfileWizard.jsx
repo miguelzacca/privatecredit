@@ -16,14 +16,42 @@ const steps = [
   { id: 5, title: 'Termos' },
 ];
 
-export function InvestorProfileWizard({ onComplete }) {
+export function InvestorProfileWizard({ user, onComplete }) {
   const [step, setStep] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
   
   // Form State
-  const [cpf, setCpf] = useState('');
+  const initialCpf = user?.cpf ? user.cpf.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, "$1.$2.$3-$4") : '';
+  const [cpf, setCpf] = useState(initialCpf);
   const [identityData, setIdentityData] = useState(null);
+  
+  const fetchCpf = async (val) => {
+    setIsLoading(true);
+    setError('');
+    try {
+      const { data } = await axios.post('/api/apifull', { cpf: val });
+      if (data.status === 'sucesso' && data.dados) {
+        if (data.dados.situacaoRFB !== 'REGULAR') {
+          setError('CPF Irregular na Receita Federal. É necessário regularizar antes de operar.');
+        } else {
+          setIdentityData(data.dados);
+        }
+      } else {
+        setError('Não foi possível validar o CPF. Verifique os dados e tente novamente.');
+      }
+    } catch (err) {
+      setError('Erro ao consultar o CPF: ' + (err.response?.data?.message || err.message));
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  React.useEffect(() => {
+    if (user?.cpf && user.cpf.length === 11) {
+      fetchCpf(user.cpf);
+    }
+  }, [user]);
   
   const [cep, setCep] = useState('');
   const [addressData, setAddressData] = useState({
@@ -59,23 +87,7 @@ export function InvestorProfileWizard({ onComplete }) {
 
     // Auto Fetch CPF
     if (val.length === 11) {
-      setIsLoading(true);
-      try {
-        const { data } = await axios.post('/api/apifull', { cpf: val });
-        if (data.status === 'sucesso' && data.dados) {
-          if (data.dados.situacaoRFB !== 'REGULAR') {
-            setError('CPF Irregular na Receita Federal. É necessário regularizar antes de operar.');
-          } else {
-            setIdentityData(data.dados);
-          }
-        } else {
-          setError('Não foi possível validar o CPF.');
-        }
-      } catch (err) {
-        setError('Erro ao consultar o CPF.');
-      } finally {
-        setIsLoading(false);
-      }
+      fetchCpf(val);
     } else {
       setIdentityData(null);
     }
@@ -476,7 +488,7 @@ export function InvestorProfileWizard({ onComplete }) {
           <div className={styles.successListItem}><Check /> Negociar operações</div>
         </div>
 
-        <button className={styles.btnPrimary} onClick={onComplete} style={{ margin: '0 auto' }}>
+        <button className={`${styles.btn} ${styles.btnPrimary}`} onClick={onComplete} style={{ margin: '0 auto' }}>
           Publicar Minha Primeira Linha <ArrowRight size={20} />
         </button>
       </motion.div>
@@ -506,12 +518,12 @@ export function InvestorProfileWizard({ onComplete }) {
 
         <div className={styles.btnGroup}>
           {step > 1 && (
-            <button className={styles.btnSecondary} onClick={prevStep} disabled={isLoading}>
+            <button className={`${styles.btn} ${styles.btnSecondary}`} onClick={prevStep} disabled={isLoading}>
               <ArrowLeft size={20} /> Voltar
             </button>
           )}
           <button 
-            className={styles.btnPrimary} 
+            className={`${styles.btn} ${styles.btnPrimary}`} 
             onClick={nextStep} 
             disabled={!canProceed() || isLoading}
           >
