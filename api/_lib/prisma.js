@@ -9,12 +9,21 @@ const connectionString = process.env.DATABASE_URL
   ? process.env.DATABASE_URL + (process.env.DATABASE_URL.includes("?") ? "&" : "?") + "pgbouncer=true&connection_limit=1"
   : "";
 
-const pool = new Pool({ connectionString });
+const pool = globalForPrisma.pool || new Pool({ connectionString });
+
+if (!globalForPrisma.pool) {
+  pool.on("error", (err) => {
+    console.error("Unexpected error on idle client", err);
+  });
+}
+
 const adapter = new PrismaPg(pool);
 
 const prisma = globalForPrisma.prisma || new PrismaClient({ adapter }).$extends(withAccelerate());
 
-if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = prisma;
+if (process.env.NODE_ENV !== "production") {
+  globalForPrisma.prisma = prisma;
+  globalForPrisma.pool = pool;
+}
 
 export default prisma;
-// Trigger reload 1mad
