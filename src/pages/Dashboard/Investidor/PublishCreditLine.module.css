@@ -1,0 +1,311 @@
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding-bottom: 120px;
+}
+
+.header {
+  margin-bottom: 40px;
+}
+
+.backBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: #666;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 500;
+  margin-bottom: 24px;
+  transition: color 0.2s;
+}
+
+.backBtn:hover {
+  color: #111;
+}
+
+.title {
+  font-size: 32px;
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  color: #111;
+  margin-bottom: 8px;
+}
+
+.subtitle {
+  color: #666;
+  font-size: 16px;
+}
+
+.section {
+  background: #fff;
+  border-radius: 24px;
+  padding: 40px;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.02);
+  margin-bottom: 24px;
+}
+
+.sectionTitle {
+  font-size: 20px;
+  font-weight: 600;
+  color: #111;
+  margin-bottom: 32px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.sectionTitle svg {
+  color: #666;
+}
+
+.formGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+
+.formGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.formGroup.full {
+  grid-column: 1 / -1;
+}
+
+.label {
+  font-size: 14px;
+  font-weight: 500;
+  color: #111;
+}
+
+.label span {
+  color: #888;
+  font-weight: 400;
+  margin-left: 4px;
+}
+
+.inputWrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.prefix {
+  position: absolute;
+  left: 16px;
+  color: #666;
+  font-weight: 500;
+  pointer-events: none;
+}
+
+.suffix {
+  position: absolute;
+  right: 16px;
+  color: #666;
+  font-weight: 500;
+  pointer-events: none;
+}
+
+.input {
+  width: 100%;
+  padding: 14px 16px;
+  border-radius: 12px;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  background: #fff;
+  font-size: 16px;
+  color: #111;
+  transition: all 0.2s ease;
+  outline: none;
+}
+
+.input.withPrefix {
+  padding-left: 48px;
+}
+
+.input.withSuffix {
+  padding-right: 48px;
+}
+
+.input:focus {
+  border-color: #111;
+  box-shadow: 0 0 0 4px rgba(0, 0, 0, 0.05);
+}
+
+.textarea {
+  min-height: 120px;
+  resize: vertical;
+}
+
+/* Elegant Checkboxes */
+.checkboxGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 12px;
+}
+
+.checkboxCard {
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 12px;
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  user-select: none;
+}
+
+.checkboxCard:hover {
+  border-color: #111;
+  background: rgba(0, 0, 0, 0.01);
+}
+
+.checkboxCard.selected {
+  border-color: #111;
+  background: #111;
+  color: #fff;
+}
+
+.checkboxIcon {
+  width: 20px;
+  height: 20px;
+  border-radius: 6px;
+  border: 2px solid rgba(0,0,0,0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.checkboxCard.selected .checkboxIcon {
+  border-color: #fff;
+  background: #fff;
+  color: #111;
+}
+
+.checkboxLabel {
+  font-size: 14px;
+  font-weight: 500;
+}
+
+/* Elegant Toggles */
+.toggleGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+
+.toggleCard {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+  border-radius: 16px;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  background: #fafafa;
+}
+
+.toggleInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.toggleTitle {
+  font-size: 15px;
+  font-weight: 600;
+  color: #111;
+}
+
+.toggleDesc {
+  font-size: 13px;
+  color: #666;
+}
+
+/* Sticky Action Bar */
+.actionBar {
+  position: fixed;
+  bottom: 0;
+  left: 280px; /* offset sidebar */
+  right: 0;
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  padding: 24px 48px;
+  border-top: 1px solid rgba(0, 0, 0, 0.05);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 100;
+}
+
+.actionInfo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: #666;
+  font-size: 14px;
+}
+
+.actionBtns {
+  display: flex;
+  gap: 16px;
+}
+
+.cancelBtn {
+  padding: 14px 24px;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 15px;
+  background: transparent;
+  border: 1px solid rgba(0,0,0,0.1);
+  color: #111;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.cancelBtn:hover {
+  background: rgba(0,0,0,0.03);
+}
+
+.publishBtn {
+  padding: 14px 32px;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 15px;
+  background: #111;
+  border: none;
+  color: #fff;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.publishBtn:hover {
+  background: #000;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0,0,0,0.15);
+}
+
+@media (max-width: 1024px) {
+  .actionBar {
+    left: 0;
+    padding: 24px;
+  }
+}
+
+@media (max-width: 768px) {
+  .formGrid {
+    grid-template-columns: 1fr;
+  }
+  .toggleGrid {
+    grid-template-columns: 1fr;
+  }
+}

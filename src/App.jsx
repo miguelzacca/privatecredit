@@ -12,6 +12,9 @@ import { CorretorDashboard } from './pages/Dashboard/Corretor/CorretorDashboard'
 import { ConstrutoraDashboard } from './pages/Dashboard/Construtora/ConstrutoraDashboard';
 import { FornecedorDashboard } from './pages/Dashboard/Fornecedor/FornecedorDashboard';
 import { EmpresaDashboard } from './pages/Dashboard/Empresa/EmpresaDashboard';
+import { PublishCreditLine } from './pages/Dashboard/Investidor/PublishCreditLine';
+import { Marketplace } from './pages/Dashboard/Marketplace/Marketplace';
+import { CreditLineDetails } from './pages/Dashboard/Marketplace/CreditLineDetails';
 
 function App() {
   return (
@@ -30,11 +33,18 @@ function App() {
         {/* Protected Route - Needs to be logged in AND have a profile */}
         <Route element={<ProtectedRoute requireProfile={true} />}>
           <Route path="/dashboard" element={<DashboardLayout />}>
-            <Route path="investidor" element={<InvestidorDashboard />} />
+            <Route path="investidor">
+              <Route index element={<InvestidorDashboard />} />
+              <Route path="nova-linha" element={<PublishCreditLine />} />
+            </Route>
             <Route path="corretor" element={<CorretorDashboard />} />
             <Route path="construtora" element={<ConstrutoraDashboard />} />
             <Route path="fornecedor" element={<FornecedorDashboard />} />
             <Route path="empresa" element={<EmpresaDashboard />} />
+            <Route path="marketplace">
+              <Route index element={<Marketplace />} />
+              <Route path=":id" element={<CreditLineDetails />} />
+            </Route>
           </Route>
         </Route>
       </Routes>

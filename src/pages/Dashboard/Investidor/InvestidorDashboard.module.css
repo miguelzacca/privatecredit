@@ -1,0 +1,265 @@
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 40px;
+}
+
+.title {
+  font-size: 32px;
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  color: #111;
+  margin-bottom: 8px;
+}
+
+.subtitle {
+  color: #666;
+  font-size: 16px;
+}
+
+.publishBtn {
+  background: #111;
+  color: #fff;
+  padding: 12px 24px;
+  border-radius: 12px;
+  font-weight: 500;
+  font-size: 14px;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  text-decoration: none;
+}
+
+.publishBtn:hover {
+  background: #000;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+}
+
+.statsGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 24px;
+  margin-bottom: 48px;
+}
+
+.statCard {
+  background: #fff;
+  border-radius: 20px;
+  padding: 24px;
+  border: 1px solid rgba(0, 0, 0, 0.04);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.statCard:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.04);
+}
+
+.statHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.statIcon {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: rgba(0, 0, 0, 0.03);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #111;
+}
+
+.statLabel {
+  font-size: 14px;
+  color: #666;
+  font-weight: 500;
+}
+
+.statValue {
+  font-size: 28px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: #111;
+}
+
+.statTrend {
+  font-size: 12px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.trendUp {
+  color: #10b981;
+}
+
+.trendDown {
+  color: #ef4444;
+}
+
+.sectionTitle {
+  font-size: 20px;
+  font-weight: 600;
+  color: #111;
+  margin-bottom: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.sectionActions {
+  display: flex;
+  gap: 12px;
+}
+
+.filterBtn {
+  background: #fff;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 500;
+  color: #555;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.filterBtn:hover, .filterBtn.active {
+  background: #111;
+  color: #fff;
+  border-color: #111;
+}
+
+.linesGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 24px;
+}
+
+.lineCard {
+  background: #fff;
+  border-radius: 20px;
+  padding: 24px;
+  border: 1px solid rgba(0, 0, 0, 0.04);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.lineCard:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.06);
+  border-color: rgba(0, 0, 0, 0.08);
+}
+
+.lineHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 20px;
+}
+
+.lineStatus {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  background: rgba(16, 185, 129, 0.1);
+  color: #10b981;
+}
+
+.lineStatus.paused {
+  background: rgba(245, 158, 11, 0.1);
+  color: #f59e0b;
+}
+
+.lineName {
+  font-size: 18px;
+  font-weight: 600;
+  color: #111;
+  margin-top: 8px;
+}
+
+.lineMetrics {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 20px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid rgba(0,0,0,0.05);
+}
+
+.metric {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.metricLabel {
+  font-size: 12px;
+  color: #888;
+}
+
+.metricValue {
+  font-size: 16px;
+  font-weight: 600;
+  color: #111;
+}
+
+.lineFooter {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.tags {
+  display: flex;
+  gap: 8px;
+}
+
+.tag {
+  background: rgba(0,0,0,0.03);
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-size: 11px;
+  color: #555;
+  font-weight: 500;
+}
+
+.actionLink {
+  color: #111;
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+@media (max-width: 1200px) {
+  .statsGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .linesGrid {
+    grid-template-columns: 1fr;
+  }
+}

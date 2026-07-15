@@ -14,12 +14,22 @@ export function DashboardLayout({ title = 'Dashboard' }) {
   };
 
   const renderNavItems = () => {
-    // Dynamic navigation could be added here based on user.profile
     return (
       <>
         <NavLink to={`/dashboard/${user?.profile || ''}`} end className={({ isActive }) => `${styles.navItem} ${isActive ? styles.active : ''}`}>
           <Home size={18} /> Início
         </NavLink>
+        
+        {user?.profile === 'investidor' ? (
+          <NavLink to="/dashboard/investidor/nova-linha" className={({ isActive }) => `${styles.navItem} ${isActive ? styles.active : ''}`}>
+            <Briefcase size={18} /> Publicar Linha
+          </NavLink>
+        ) : (
+          <NavLink to="/dashboard/marketplace" className={({ isActive }) => `${styles.navItem} ${isActive ? styles.active : ''}`}>
+            <Briefcase size={18} /> Marketplace
+          </NavLink>
+        )}
+
         <NavLink to="/dashboard/opportunities" className={({ isActive }) => `${styles.navItem} ${isActive ? styles.active : ''}`}>
           <Briefcase size={18} /> Oportunidades
         </NavLink>
