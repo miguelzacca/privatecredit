@@ -217,26 +217,24 @@ export function InvestorProfileWizard({ user, onComplete }) {
               </div>
             )}
 
-            {identityData && ((identityData.situacaoRFB || identityData.situacaoCadastral || identityData.situacao || '').toUpperCase() === 'REGULAR') && (
-              <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className={styles.infoGrid}>
-                <div className={styles.infoItem}>
-                  <span className={styles.infoLabel}>Nome</span>
-                  <span className={styles.infoValue}>{identityData.nome || identityData.nomeRazao || '-'}</span>
+            {identityData && (
+              <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className={styles.cardsGrid}>
+                <div className={styles.infoCard}>
+                  <span className={styles.infoCardLabel}>Nome Completo</span>
+                  <span className={styles.infoCardValue}>{identityData.nome || identityData.nomeRazao || '-'}</span>
                 </div>
-                <div className={styles.infoItem}>
-                  <span className={styles.infoLabel}>Data de Nascimento</span>
-                  <span className={styles.infoValue}>{identityData.nascimento || identityData.nascFund || identityData.dataNascimento || '-'}</span>
+                <div className={styles.infoCard}>
+                  <span className={styles.infoCardLabel}>Data de Nascimento</span>
+                  <span className={styles.infoCardValue}>{identityData.nascimento || identityData.nascFund || identityData.dataNascimento || '-'}</span>
                 </div>
-                <div className={styles.infoItem}>
-                  <span className={styles.infoLabel}>Nome da Mãe</span>
-                  <span className={styles.infoValue}>{identityData.mae || identityData.nomeMae || '-'}</span>
+                <div className={styles.infoCard}>
+                  <span className={styles.infoCardLabel}>Nome da Mãe</span>
+                  <span className={styles.infoCardValue}>{identityData.mae || identityData.nomeMae || '-'}</span>
                 </div>
-                <div className={styles.infoItem}>
-                  <span className={styles.infoLabel}>Situação RFB</span>
-                  <span className={styles.infoValue}>
-                    <div className={styles.badgeSuccess}>
-                      <Check size={14} /> {identityData.situacaoRFB || identityData.situacaoCadastral || identityData.situacao || 'Regular'}
-                    </div>
+                <div className={styles.infoCard}>
+                  <span className={styles.infoCardLabel}>Situação RFB</span>
+                  <span className={styles.infoCardValue} style={{ color: '#059669', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '4px' }}>
+                    <Check size={16} /> {identityData.situacaoRFB || identityData.situacaoCadastral || identityData.situacao || 'Regular'}
                   </span>
                 </div>
               </motion.div>
