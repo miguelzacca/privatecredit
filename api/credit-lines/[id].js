@@ -38,13 +38,17 @@ export default async function handler(req, res) {
 
       const formatted = {
         id: creditLine.id,
+        title: `Crédito ${creditLine.capital >= 1000000 ? 'Premium' : 'Padrão'}`,
         investor: creditLine.user?.name || 'Investidor Privado',
         rating: '5.0', // Fixed for demo
         maxAmount: formatCurrency(creditLine.capital),
+        minAmount: formatCurrency(creditLine.capital * 0.1),
         rate: `${creditLine.interestRate.toFixed(2)}% a.m.`,
         term: `Até ${creditLine.duration}x`,
         volume: 'Novo',
+        responseTime: '24h',
         tags: parsedSegments.length > 0 ? parsedSegments : ['Diversos'],
+        badges: ['Nova', 'Verificado'],
         capital: creditLine.capital,
         interestRate: creditLine.interestRate,
         duration: creditLine.duration,

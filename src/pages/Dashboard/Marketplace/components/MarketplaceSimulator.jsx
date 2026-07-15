@@ -3,16 +3,18 @@ import { motion } from 'framer-motion';
 import { Calculator } from 'lucide-react';
 import styles from './MarketplaceSimulator.module.css';
 
-export function MarketplaceSimulator({ rate, maxTerm, maxAmount }) {
-  const [amount, setAmount] = useState(500000);
-  const [term, setTerm] = useState(24);
-  const [monthlyPayment, setMonthlyPayment] = useState(0);
-  const [totalCost, setTotalCost] = useState(0);
-
-  // Convert rate string like "1.2% a.m." to a number
+export function MarketplaceSimulator({ rate, maxTerm, maxAmount, minAmount }) {
   const numericRate = parseFloat(rate.replace(',', '.')) / 100 || 0.012;
   const maxTermNumeric = parseInt(maxTerm.replace(/\D/g, '')) || 48;
   const maxAmountNumeric = parseInt(maxAmount.replace(/\D/g, '')) || 10000000;
+  const minAmountNumeric = minAmount && minAmount !== 'A consultar' 
+    ? parseInt(minAmount.replace(/\D/g, '')) || 100000 
+    : 100000;
+
+  const [amount, setAmount] = useState(minAmountNumeric);
+  const [term, setTerm] = useState(Math.min(24, maxTermNumeric));
+  const [monthlyPayment, setMonthlyPayment] = useState(0);
+  const [totalCost, setTotalCost] = useState(0);
 
   useEffect(() => {
     // Tabela Price calculation
@@ -46,9 +48,9 @@ export function MarketplaceSimulator({ rate, maxTerm, maxAmount }) {
           </div>
           <input 
             type="range" 
-            min={100000} 
+            min={minAmountNumeric} 
             max={maxAmountNumeric} 
-            step={50000}
+            step={Math.max(1000, Math.floor((maxAmountNumeric - minAmountNumeric) / 20))}
             value={amount} 
             onChange={(e) => setAmount(Number(e.target.value))} 
             className={styles.slider}

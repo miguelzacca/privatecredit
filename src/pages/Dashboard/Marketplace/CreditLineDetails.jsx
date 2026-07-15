@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
+import axios from 'axios';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   ArrowLeft, ShieldCheck, Star, Send, FileText, CheckCircle2, 
@@ -21,35 +22,79 @@ const itemVariants = {
 export function CreditLineDetails() {
   const { id } = useParams();
   const [openFaq, setOpenFaq] = useState(null);
+  const [offer, setOffer] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-  // Mock data based on id
-  const offer = {
-    id: id || '123',
-    investor: 'J.P. Morgan Asset',
-    rating: '4.9',
-    volume: 'R$ 150M+ financiados',
-    location: 'São Paulo, SP',
-    maxAmount: '10.000.000',
-    minAmount: '500.000',
-    rate: '1.2% a.m.',
-    term: 'Até 48 meses',
-    time: '24h',
-    description: 'Buscamos financiar operações estruturadas para construtoras e incorporadoras com histórico comprovado de entregas. Nossa análise é focada no fluxo de caixa da obra e no VGV do projeto. Oferecemos carência de até 12 meses dependendo do estágio da obra.',
-    acceptedTypes: ['Operações imobiliárias', 'Capital de giro estruturado', 'Expansão'],
-    guarantees: 'Alienação Fiduciária de Imóveis ou Recebíveis Performados.',
-    amortization: 'Sim, sem penalidades após o 6º mês.',
-    negotiation: 'Sim, para volumes acima de R$ 2.000.000.',
-    faqs: [
-      { question: "Qual é o tempo médio para liberação dos recursos?", answer: "Após a aprovação de crédito e assinatura dos contratos, a liberação ocorre em até 48 horas úteis." },
-      { question: "É possível estender a carência?", answer: "Sim, a carência pode ser estendida até 18 meses, com um ajuste de 0.15% na taxa final." },
-      { question: "Quais documentos são necessários na primeira fase?", answer: "Apresentação institucional, Balanço dos últimos 2 anos, DRE recente e a planilha de VGV do projeto em caso de obras." }
-    ]
-  };
+  useEffect(() => {
+    const fetchOffer = async () => {
+      try {
+        const response = await axios.get(`/api/credit-lines/${id}`);
+        if (response.data && response.data.data) {
+          const apiData = response.data.data;
+          
+          setOffer({
+            id: apiData.id,
+            investor: apiData.investor,
+            rating: apiData.rating || '5.0',
+            volume: 'Novo',
+            location: 'Brasil', // Default as API doesn't have it
+            maxAmount: apiData.maxAmount,
+            minAmount: apiData.minAmount || 'A consultar',
+            rate: apiData.rate,
+            term: apiData.term,
+            time: '24h',
+            description: `Linha de crédito de R$ ${apiData.maxAmount} com taxa de ${apiData.rate} para ${apiData.term}. Focada no seu crescimento.`,
+            acceptedTypes: apiData.tags || ['Diversos'],
+            guarantees: apiData.rawGuarantees && apiData.rawGuarantees.length > 0 ? apiData.rawGuarantees.join(', ') : 'A consultar',
+            amortization: apiData.amortization ? 'Sim' : 'Não',
+            negotiation: apiData.negotiation ? 'Sim' : 'Não',
+            faqs: [
+              { question: "Qual é o tempo médio para liberação dos recursos?", answer: "Após a aprovação de crédito e assinatura dos contratos, a liberação ocorre em até 48 horas úteis." },
+              { question: "É possível estender a carência?", answer: "Carência depende da negociação e do tipo de operação." }
+            ]
+          });
+        }
+      } catch (error) {
+        console.error('Error fetching credit line details:', error);
+        // Fallback mock offer
+        setOffer({
+          id: id || '123',
+          investor: 'J.P. Morgan Asset',
+          rating: '4.9',
+          volume: 'R$ 150M+ financiados',
+          location: 'São Paulo, SP',
+          maxAmount: '10.000.000',
+          minAmount: '500.000',
+          rate: '1.2% a.m.',
+          term: 'Até 48 meses',
+          time: '24h',
+          description: 'Buscamos financiar operações estruturadas para construtoras e incorporadoras com histórico comprovado de entregas. Nossa análise é focada no fluxo de caixa da obra e no VGV do projeto. Oferecemos carência de até 12 meses dependendo do estágio da obra.',
+          acceptedTypes: ['Operações imobiliárias', 'Capital de giro estruturado', 'Expansão'],
+          guarantees: 'Alienação Fiduciária de Imóveis ou Recebíveis Performados.',
+          amortization: 'Sim, sem penalidades após o 6º mês.',
+          negotiation: 'Sim, para volumes acima de R$ 2.000.000.',
+          faqs: [
+            { question: "Qual é o tempo médio para liberação dos recursos?", answer: "Após a aprovação de crédito e assinatura dos contratos, a liberação ocorre em até 48 horas úteis." },
+            { question: "É possível estender a carência?", answer: "Sim, a carência pode ser estendida até 18 meses, com um ajuste de 0.15% na taxa final." },
+            { question: "Quais documentos são necessários na primeira fase?", answer: "Apresentação institucional, Balanço dos últimos 2 anos, DRE recente e a planilha de VGV do projeto em caso de obras." }
+          ]
+        });
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchOffer();
+  }, [id]);
 
   const toggleFaq = (index) => {
     if (openFaq === index) setOpenFaq(null);
     else setOpenFaq(index);
   };
+
+  if (loading || !offer) {
+    return <div className={styles.container} style={{ padding: '40px', textAlign: 'center' }}>Carregando detalhes...</div>;
+  }
 
   return (
     <motion.div className={styles.container} variants={containerVariants} initial="hidden" animate="show">
@@ -206,7 +251,7 @@ export function CreditLineDetails() {
         <div className={styles.sideColumn}>
           {/* Simulador Integrado */}
           <motion.div variants={itemVariants}>
-            <MarketplaceSimulator rate={offer.rate} maxTerm={offer.term} maxAmount={offer.maxAmount} />
+            <MarketplaceSimulator rate={offer.rate} maxTerm={offer.term} maxAmount={offer.maxAmount} minAmount={offer.minAmount} />
           </motion.div>
 
           <motion.div variants={itemVariants} className={styles.section}>
