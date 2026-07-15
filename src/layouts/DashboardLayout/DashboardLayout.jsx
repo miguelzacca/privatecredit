@@ -5,6 +5,7 @@ import {
   LogOut, Bell, Search, Home, Briefcase, FileText, Settings, User, 
   Store, Layers, Inbox, TrendingUp, Users, PieChart, Bookmark, FileSignature 
 } from 'lucide-react';
+import { AiChat } from '../../components/AiChat/AiChat';
 import styles from './DashboardLayout.module.css';
 
 export function DashboardLayout({ title = 'Dashboard' }) {
@@ -162,6 +163,8 @@ export function DashboardLayout({ title = 'Dashboard' }) {
           <Outlet />
         </div>
       </main>
+
+      <AiChat />
     </div>
   );
 }
