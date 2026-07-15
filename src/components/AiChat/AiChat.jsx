@@ -24,7 +24,7 @@ function renderMarkdown(text) {
     return `<a href="${href}" target="_blank" rel="noopener noreferrer">${label}</a>`;
   });
 
-  html = html.replace(/(\/dashboard\/[a-zA-Z0-9\-\/]+)/g, '<a href="$1">$1</a>');
+  html = html.replace(/(^|\s)(\/dashboard\/[a-zA-Z0-9\-\/]+)/g, '$1<a href="$2">$2</a>');
 
   html = html.replace(/^[•\-] (.+)$/gm, '<li>$1</li>');
   html = html.replace(/(<li>.*<\/li>\n?)+/g, (match) => `<ul>${match}</ul>`);
