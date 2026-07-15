@@ -243,7 +243,7 @@ export default function Login() {
                     <div className={styles.submitSpinner} />
                   ) : (
                     <>
-                      Enviar Magic Link
+                      Enviar Link
                       <ArrowRight className={styles.btnArrow} />
                     </>
                   )}
