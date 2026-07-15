@@ -1,172 +1,112 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Search, SlidersHorizontal, ShieldCheck, Star, Clock, ArrowRight, Activity, Percent } from 'lucide-react';
-import axios from 'axios';
+import { motion } from 'framer-motion';
 import styles from './Marketplace.module.css';
+
+// Components
+import { MarketplaceHero } from './components/MarketplaceHero';
+import { MarketplaceSearch } from './components/MarketplaceSearch';
+import { MarketplaceGrid } from './components/MarketplaceGrid';
 
 const containerVariants = {
   hidden: { opacity: 0 },
   show: { opacity: 1, transition: { staggerChildren: 0.1 } }
 };
 
-const itemVariants = {
-  hidden: { opacity: 0, y: 20 },
-  show: { opacity: 1, y: 0 }
-};
-
-const mockOffers = [];
+const DUMMY_OFFERS = [
+  {
+    id: '1',
+    title: 'Crédito Estruturado Premium',
+    investor: 'J.P. Morgan Asset',
+    rating: 4.9,
+    maxAmount: '10.000.000',
+    minAmount: '500.000',
+    rate: '1.2% a.m.',
+    term: 'Até 48 meses',
+    volume: 'R$ 150M+',
+    responseTime: '24h',
+    operations: 342,
+    guarantees: 'Recebíveis, Imóvel',
+    tags: ['Construtoras', 'Capital de Giro'],
+    badges: ['Oferta Premium', 'Verificado']
+  },
+  {
+    id: '2',
+    title: 'Antecipação de Recebíveis (FIDC)',
+    investor: 'Vinci Partners',
+    rating: 4.7,
+    maxAmount: '5.000.000',
+    minAmount: '100.000',
+    rate: '0.9% a.m.',
+    term: 'Até 24 meses',
+    volume: 'R$ 80M+',
+    responseTime: '4h',
+    operations: 1205,
+    guarantees: 'Contratos, Notas Fiscais',
+    tags: ['Serviços', 'Fornecedores'],
+    badges: ['Resposta rápida', 'Alta demanda']
+  },
+  {
+    id: '3',
+    title: 'Financiamento para Máquinas',
+    investor: 'BNDES / Parceiros',
+    rating: 4.5,
+    maxAmount: '2.000.000',
+    minAmount: '50.000',
+    rate: '0.75% a.m.',
+    term: 'Até 60 meses',
+    volume: 'R$ 300M+',
+    responseTime: '48h',
+    operations: 500,
+    guarantees: 'Alienação Fiduciária',
+    tags: ['Indústria', 'Agronegócio'],
+    badges: ['Baixo risco']
+  },
+  {
+    id: '4',
+    title: 'Venture Debt',
+    investor: 'Silicon Valley Bank',
+    rating: 4.8,
+    maxAmount: '25.000.000',
+    minAmount: '2.000.000',
+    rate: '1.5% a.m.',
+    term: 'Até 36 meses',
+    volume: 'R$ 500M+',
+    responseTime: '72h',
+    operations: 45,
+    guarantees: 'Ações, IP',
+    tags: ['Tecnologia', 'SaaS'],
+    badges: ['Nova', 'Investidor Top']
+  }
+];
 
 export function Marketplace() {
-  const [showFilters, setShowFilters] = useState(false);
-  const [offers, setOffers] = useState([]);
+  const [viewMode, setViewMode] = useState('grid');
   const [loading, setLoading] = useState(true);
+  const [offers, setOffers] = useState([]);
 
   useEffect(() => {
-    axios.get('/api/credit-lines')
-      .then(res => {
-        setOffers([...res.data.data, ...mockOffers]);
-      })
-      .catch(err => {
-        console.error('Error fetching credit lines:', err);
-      })
-      .finally(() => {
-        setLoading(false);
-      });
+    // Simulate API fetch
+    const timer = setTimeout(() => {
+      setOffers(DUMMY_OFFERS);
+      setLoading(false);
+    }, 1500);
+
+    return () => clearTimeout(timer);
   }, []);
 
   return (
     <motion.div className={styles.container} variants={containerVariants} initial="hidden" animate="show">
-      <div className={styles.header}>
-        <div>
-          <h1 className={styles.title}>Marketplace de Crédito</h1>
-          <p className={styles.subtitle}>Encontre a linha de crédito ideal para o momento da sua empresa.</p>
-        </div>
-        
-        <div className={styles.controls}>
-          <div className={styles.searchBar}>
-            <Search size={18} color="#666" />
-            <input type="text" placeholder="Buscar linhas de crédito..." />
-          </div>
-          <button className={styles.filterBtn} onClick={() => setShowFilters(!showFilters)}>
-            <SlidersHorizontal size={18} />
-            Filtros
-          </button>
-          <select className={styles.sortSelect}>
-            <option>Recomendados</option>
-            <option>Menor Taxa</option>
-            <option>Maior Valor</option>
-            <option>Mais Rápidos</option>
-          </select>
-        </div>
+      <MarketplaceHero />
+      
+      <MarketplaceSearch viewMode={viewMode} setViewMode={setViewMode} />
+
+      {/* Seções (Tabs ou Divisores) podem ser adicionadas aqui no futuro */}
+      <div className={styles.sectionHeader}>
+        <h2 className={styles.sectionTitle}>Ofertas em Destaque</h2>
       </div>
 
-      <AnimatePresence>
-        {showFilters && (
-          <motion.div 
-            initial={{ opacity: 0, height: 0, marginBottom: 0 }}
-            animate={{ opacity: 1, height: 'auto', marginBottom: 16 }}
-            exit={{ opacity: 0, height: 0, marginBottom: 0 }}
-            style={{ overflow: 'hidden' }}
-          >
-            <div className={styles.filtersPanel}>
-              <div className={styles.filterGroup}>
-                <label className={styles.filterLabel}>Valor Desejado</label>
-                <input type="text" className={styles.filterInput} placeholder="Ex: R$ 50.000" />
-              </div>
-              <div className={styles.filterGroup}>
-                <label className={styles.filterLabel}>Prazo (Meses)</label>
-                <input type="number" className={styles.filterInput} placeholder="Ex: 24" />
-              </div>
-              <div className={styles.filterGroup}>
-                <label className={styles.filterLabel}>Segmento</label>
-                <select className={styles.filterInput}>
-                  <option>Todos</option>
-                  <option>Construtoras</option>
-                  <option>Fornecedores</option>
-                </select>
-              </div>
-              <div className={styles.filterGroup}>
-                <label className={styles.filterLabel}>Garantias</label>
-                <select className={styles.filterInput}>
-                  <option>Indiferente</option>
-                  <option>Com Garantia Real</option>
-                  <option>Sem Garantia Real</option>
-                </select>
-              </div>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      <MarketplaceGrid offers={offers} viewMode={viewMode} loading={loading} />
 
-      {loading ? (
-        <div style={{ textAlign: 'center', padding: '80px 24px', background: '#fff', borderRadius: '24px', border: '1px dashed rgba(0,0,0,0.1)' }}>
-          <h3 style={{ fontSize: '20px', fontWeight: '600', color: '#111', marginBottom: '8px' }}>Carregando ofertas...</h3>
-        </div>
-      ) : offers.length === 0 ? (
-        <div style={{ textAlign: 'center', padding: '80px 24px', background: '#fff', borderRadius: '24px', border: '1px dashed rgba(0,0,0,0.1)' }}>
-          <Search size={48} color="#ccc" style={{ marginBottom: '16px' }} />
-          <h3 style={{ fontSize: '20px', fontWeight: '600', color: '#111', marginBottom: '8px' }}>Nenhuma oferta encontrada</h3>
-          <p style={{ color: '#666', fontSize: '15px' }}>Ainda não há linhas de crédito publicadas no momento. Tente novamente mais tarde.</p>
-        </div>
-      ) : (
-        <div className={styles.grid}>
-          {offers.map((offer) => (
-            <motion.div key={offer.id} variants={itemVariants}>
-              <Link to={`/dashboard/marketplace/${offer.id}`} className={styles.card}>
-                <div className={styles.cardHeader}>
-                  <div className={styles.investorInfo}>
-                    <div className={styles.investorAvatar}>
-                      {offer.investor.charAt(0)}
-                    </div>
-                    <div className={styles.investorDetails}>
-                      <span className={styles.investorName}>{offer.investor}</span>
-                      <span className={styles.verifiedBadge}>
-                        <ShieldCheck size={14} /> Verificado
-                      </span>
-                    </div>
-                  </div>
-                  <div className={styles.rating}>
-                    <Star size={12} fill="currentColor" /> {offer.rating}
-                  </div>
-                </div>
-
-                <div className={styles.mainStats}>
-                  <div className={styles.mainStat}>
-                    <span className={styles.statLabel}>Disponível até</span>
-                    <span className={styles.statValue}>R$ {offer.maxAmount}</span>
-                  </div>
-                  <div className={styles.mainStat}>
-                    <span className={styles.statLabel}>Juros a partir de</span>
-                    <span className={`${styles.statValue} ${styles.highlight}`}>{offer.rate}</span>
-                  </div>
-                </div>
-
-                <div className={styles.metricsGrid}>
-                  <div className={styles.metricRow}>
-                    <Clock size={16} /> {offer.term}
-                  </div>
-                  <div className={styles.metricRow}>
-                    <Activity size={16} /> Vol: {offer.volume}
-                  </div>
-                </div>
-
-                <div className={styles.cardFooter}>
-                  <div className={styles.tags}>
-                    {offer.tags && offer.tags.map((tag, i) => (
-                      <span key={i} className={styles.tag}>{tag}</span>
-                    ))}
-                  </div>
-                  
-                  <div className={styles.actionBtn}>
-                    Ver Condições <ArrowRight size={16} />
-                  </div>
-                </div>
-              </Link>
-            </motion.div>
-          ))}
-        </div>
-      )}
     </motion.div>
   );
 }

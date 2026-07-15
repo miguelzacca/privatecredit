@@ -1,7 +1,10 @@
 import React from 'react';
 import { NavLink, Outlet, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
-import { LogOut, Bell, Search, Home, Briefcase, FileText, Settings, User } from 'lucide-react';
+import { 
+  LogOut, Bell, Search, Home, Briefcase, FileText, Settings, User, 
+  Store, Layers, Inbox, TrendingUp, Users, PieChart, Bookmark, FileSignature 
+} from 'lucide-react';
 import styles from './DashboardLayout.module.css';
 
 export function DashboardLayout({ title = 'Dashboard' }) {
@@ -14,27 +17,88 @@ export function DashboardLayout({ title = 'Dashboard' }) {
   };
 
   const renderNavItems = () => {
+    const profile = user?.profile || '';
+    
+    // Common base item
+    const commonTop = (
+      <NavLink to={`/dashboard/${profile}`} end className={({ isActive }) => `${styles.navItem} ${isActive ? styles.active : ''}`}>
+        <Home size={18} /> Início
+      </NavLink>
+    );
+
+    if (profile === 'investidor') {
+      return (
+        <>
+          {commonTop}
+          <NavLink to="/dashboard/marketplace" className={({ isActive }) => `${styles.navItem} ${isActive ? styles.active : ''}`}>
+            <Store size={18} /> Marketplace
+          </NavLink>
+          {/* <NavLink to="/dashboard/investidor/nova-linha" className={({ isActive }) => `${styles.navItem} ${isActive ? styles.active : ''}`}>
+            <Layers size={18} /> Minhas Linhas
+          </NavLink> */}
+          <NavLink to="/dashboard/investidor/solicitacoes" className={({ isActive }) => `${styles.navItem} ${isActive ? styles.active : ''}`}>
+            <Inbox size={18} /> Solicitações Recebidas
+          </NavLink>
+          {/* <NavLink to="/dashboard/investidor/negociacoes" className={({ isActive }) => `${styles.navItem} ${isActive ? styles.active : ''}`}>
+            <Briefcase size={18} /> Negociações
+          </NavLink> */}
+          <NavLink to="/dashboard/investidor/operacoes" className={({ isActive }) => `${styles.navItem} ${isActive ? styles.active : ''}`}>
+            <FileSignature size={18} /> Operações
+          </NavLink>
+          {/* <NavLink to="/dashboard/investidor/rentabilidade" className={({ isActive }) => `${styles.navItem} ${isActive ? styles.active : ''}`}>
+            <TrendingUp size={18} /> Rentabilidade
+          </NavLink> */}
+          <NavLink to="/dashboard/investidor/clientes" className={({ isActive }) => `${styles.navItem} ${isActive ? styles.active : ''}`}>
+            <Users size={18} /> Clientes
+          </NavLink>
+          <NavLink to="/dashboard/investidor/relatorios" className={({ isActive }) => `${styles.navItem} ${isActive ? styles.active : ''}`}>
+            <PieChart size={18} /> Relatórios
+          </NavLink>
+          <NavLink to="/dashboard/settings" className={({ isActive }) => `${styles.navItem} ${isActive ? styles.active : ''}`}>
+            <Settings size={18} /> Configurações
+          </NavLink>
+        </>
+      );
+    }
+
+    if (profile === 'empresa' || profile === 'construtora' || profile === 'fornecedor') {
+      return (
+        <>
+          {commonTop}
+          <NavLink to="/dashboard/marketplace" className={({ isActive }) => `${styles.navItem} ${isActive ? styles.active : ''}`}>
+            <Store size={18} /> Marketplace
+          </NavLink>
+          <NavLink to="/dashboard/marketplace/salvas" className={({ isActive }) => `${styles.navItem} ${isActive ? styles.active : ''}`}>
+            <Bookmark size={18} /> Linhas Salvas
+          </NavLink>
+          <NavLink to="/dashboard/empresa/solicitacoes" className={({ isActive }) => `${styles.navItem} ${isActive ? styles.active : ''}`}>
+            <Inbox size={18} /> Solicitações
+          </NavLink>
+          <NavLink to="/dashboard/empresa/propostas" className={({ isActive }) => `${styles.navItem} ${isActive ? styles.active : ''}`}>
+            <Briefcase size={18} /> Propostas
+          </NavLink>
+          <NavLink to="/dashboard/empresa/operacoes" className={({ isActive }) => `${styles.navItem} ${isActive ? styles.active : ''}`}>
+            <FileSignature size={18} /> Operações
+          </NavLink>
+          <NavLink to="/dashboard/documents" className={({ isActive }) => `${styles.navItem} ${isActive ? styles.active : ''}`}>
+            <FileText size={18} /> Documentos
+          </NavLink>
+          <NavLink to="/dashboard/empresa/contratos" className={({ isActive }) => `${styles.navItem} ${isActive ? styles.active : ''}`}>
+            <FileText size={18} /> Contratos
+          </NavLink>
+          <NavLink to="/dashboard/settings" className={({ isActive }) => `${styles.navItem} ${isActive ? styles.active : ''}`}>
+            <Settings size={18} /> Configurações
+          </NavLink>
+        </>
+      );
+    }
+
+    // Default fallback
     return (
       <>
-        <NavLink to={`/dashboard/${user?.profile || ''}`} end className={({ isActive }) => `${styles.navItem} ${isActive ? styles.active : ''}`}>
-          <Home size={18} /> Início
-        </NavLink>
-        
-        {user?.profile === 'investidor' ? (
-          <NavLink to="/dashboard/investidor/nova-linha" className={({ isActive }) => `${styles.navItem} ${isActive ? styles.active : ''}`}>
-            <Briefcase size={18} /> Publicar Linha
-          </NavLink>
-        ) : (
-          <NavLink to="/dashboard/marketplace" className={({ isActive }) => `${styles.navItem} ${isActive ? styles.active : ''}`}>
-            <Briefcase size={18} /> Marketplace
-          </NavLink>
-        )}
-
-        <NavLink to="/dashboard/opportunities" className={({ isActive }) => `${styles.navItem} ${isActive ? styles.active : ''}`}>
-          <Briefcase size={18} /> Oportunidades
-        </NavLink>
-        <NavLink to="/dashboard/documents" className={({ isActive }) => `${styles.navItem} ${isActive ? styles.active : ''}`}>
-          <FileText size={18} /> Documentos
+        {commonTop}
+        <NavLink to="/dashboard/marketplace" className={({ isActive }) => `${styles.navItem} ${isActive ? styles.active : ''}`}>
+          <Store size={18} /> Marketplace
         </NavLink>
         <NavLink to="/dashboard/settings" className={({ isActive }) => `${styles.navItem} ${isActive ? styles.active : ''}`}>
           <Settings size={18} /> Configurações

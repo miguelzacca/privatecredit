@@ -1,8 +1,12 @@
 import React, { useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowLeft, ShieldCheck, Star, Send, X, FileText, CheckCircle2, Clock, Percent, Activity, Users, MapPin, UploadCloud } from 'lucide-react';
+import { 
+  ArrowLeft, ShieldCheck, Star, Send, FileText, CheckCircle2, 
+  Clock, Activity, Users, MapPin, ChevronDown, ChevronUp 
+} from 'lucide-react';
 import styles from './CreditLineDetails.module.css';
+import { MarketplaceSimulator } from './components/MarketplaceSimulator';
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -16,34 +20,35 @@ const itemVariants = {
 
 export function CreditLineDetails() {
   const { id } = useParams();
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isSuccess, setIsSuccess] = useState(false);
+  const [openFaq, setOpenFaq] = useState(null);
 
   // Mock data based on id
   const offer = {
-    investor: 'Vertex Invest',
-    rating: '4.8',
-    volume: 'Mais de R$ 50M financiados',
+    id: id || '123',
+    investor: 'J.P. Morgan Asset',
+    rating: '4.9',
+    volume: 'R$ 150M+ financiados',
     location: 'São Paulo, SP',
-    maxAmount: 'R$ 2.500.000',
-    minAmount: 'R$ 100.000',
-    rate: '3,20% a.m.',
-    term: 'Até 60 meses',
-    time: '5 dias úteis',
+    maxAmount: '10.000.000',
+    minAmount: '500.000',
+    rate: '1.2% a.m.',
+    term: 'Até 48 meses',
+    time: '24h',
     description: 'Buscamos financiar operações estruturadas para construtoras e incorporadoras com histórico comprovado de entregas. Nossa análise é focada no fluxo de caixa da obra e no VGV do projeto. Oferecemos carência de até 12 meses dependendo do estágio da obra.',
     acceptedTypes: ['Operações imobiliárias', 'Capital de giro estruturado', 'Expansão'],
     guarantees: 'Alienação Fiduciária de Imóveis ou Recebíveis Performados.',
     amortization: 'Sim, sem penalidades após o 6º mês.',
-    negotiation: 'Sim, para volumes acima de R$ 1.000.000.',
+    negotiation: 'Sim, para volumes acima de R$ 2.000.000.',
+    faqs: [
+      { question: "Qual é o tempo médio para liberação dos recursos?", answer: "Após a aprovação de crédito e assinatura dos contratos, a liberação ocorre em até 48 horas úteis." },
+      { question: "É possível estender a carência?", answer: "Sim, a carência pode ser estendida até 18 meses, com um ajuste de 0.15% na taxa final." },
+      { question: "Quais documentos são necessários na primeira fase?", answer: "Apresentação institucional, Balanço dos últimos 2 anos, DRE recente e a planilha de VGV do projeto em caso de obras." }
+    ]
   };
 
-  const handleRequestSubmit = (e) => {
-    e.preventDefault();
-    setIsSuccess(true);
-    setTimeout(() => {
-      setIsModalOpen(false);
-      setIsSuccess(false);
-    }, 2000);
+  const toggleFaq = (index) => {
+    if (openFaq === index) setOpenFaq(null);
+    else setOpenFaq(index);
   };
 
   return (
@@ -72,16 +77,17 @@ export function CreditLineDetails() {
             </div>
           </div>
         </div>
-        <button className={styles.requestBtn} onClick={() => setIsModalOpen(true)}>
+        
+        <Link to={`/dashboard/marketplace/${offer.id}/solicitar`} className={styles.requestBtn}>
           <Send size={18} /> Solicitar esta Linha
-        </button>
+        </Link>
       </div>
 
       <div className={styles.grid}>
         <div className={styles.mainColumn}>
           <motion.div variants={itemVariants} className={styles.section}>
             <div className={styles.sectionTitle}>
-              <FileText size={20} /> Visão Geral
+              <FileText size={20} /> Visão Geral da Operação
             </div>
             <p className={styles.description}>{offer.description}</p>
           </motion.div>
@@ -89,7 +95,7 @@ export function CreditLineDetails() {
           <motion.div variants={itemVariants} className={styles.statsGrid}>
             <div className={styles.statBox}>
               <span className={styles.statLabel}>Valor Máximo</span>
-              <span className={styles.statValue}>{offer.maxAmount}</span>
+              <span className={styles.statValue}>R$ {offer.maxAmount}</span>
             </div>
             <div className={styles.statBox}>
               <span className={styles.statLabel}>Taxa de Juros</span>
@@ -100,7 +106,7 @@ export function CreditLineDetails() {
               <span className={styles.statValue}>{offer.term}</span>
             </div>
             <div className={styles.statBox}>
-              <span className={styles.statLabel}>Tempo de Aprovação</span>
+              <span className={styles.statLabel}>Tempo de Resposta</span>
               <span className={styles.statValue}>{offer.time}</span>
             </div>
           </motion.div>
@@ -112,7 +118,7 @@ export function CreditLineDetails() {
             <div className={styles.infoList}>
               <div className={styles.infoItem}>
                 <span className={styles.infoLabel}>Valor Mínimo</span>
-                <span className={styles.infoValue}>{offer.minAmount}</span>
+                <span className={styles.infoValue}>R$ {offer.minAmount}</span>
               </div>
               <div className={styles.infoItem}>
                 <span className={styles.infoLabel}>Garantias Exigidas</span>
@@ -128,9 +134,81 @@ export function CreditLineDetails() {
               </div>
             </div>
           </motion.div>
+
+          {/* Fluxo da Operação */}
+          <motion.div variants={itemVariants} className={styles.section}>
+            <div className={styles.sectionTitle}>
+              <Activity size={20} /> Fluxo da Operação
+            </div>
+            <div className={styles.timeline}>
+              <div className={styles.timelineItem}>
+                <div className={styles.timelinePoint} />
+                <div className={styles.timelineContent}>
+                  <h4>1. Envio da Solicitação</h4>
+                  <p>Preenchimento do wizard com o valor, prazo e finalidade.</p>
+                </div>
+              </div>
+              <div className={styles.timelineItem}>
+                <div className={styles.timelinePoint} />
+                <div className={styles.timelineContent}>
+                  <h4>2. Análise Prévia</h4>
+                  <p>A equipe do investidor analisa as condições em até {offer.time}.</p>
+                </div>
+              </div>
+              <div className={styles.timelineItem}>
+                <div className={styles.timelinePoint} />
+                <div className={styles.timelineContent}>
+                  <h4>3. Due Diligence e Contratos</h4>
+                  <p>Envio da documentação completa e auditoria das garantias ofertadas.</p>
+                </div>
+              </div>
+              <div className={styles.timelineItem}>
+                <div className={`${styles.timelinePoint} ${styles.timelinePointFinal}`} />
+                <div className={styles.timelineContent}>
+                  <h4>4. Liberação de Recursos</h4>
+                  <p>Assinatura digital e desembolso imediato na conta da empresa.</p>
+                </div>
+              </div>
+            </div>
+          </motion.div>
+
+          {/* FAQs */}
+          <motion.div variants={itemVariants} className={styles.section}>
+            <div className={styles.sectionTitle}>
+              Perguntas Frequentes
+            </div>
+            <div className={styles.faqList}>
+              {offer.faqs.map((faq, i) => (
+                <div key={i} className={`${styles.faqItem} ${openFaq === i ? styles.faqOpen : ''}`}>
+                  <button className={styles.faqQuestion} onClick={() => toggleFaq(i)}>
+                    {faq.question}
+                    {openFaq === i ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
+                  </button>
+                  <AnimatePresence>
+                    {openFaq === i && (
+                      <motion.div 
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: 'auto', opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        className={styles.faqAnswerWrapper}
+                      >
+                        <div className={styles.faqAnswer}>{faq.answer}</div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
+              ))}
+            </div>
+          </motion.div>
+
         </div>
 
         <div className={styles.sideColumn}>
+          {/* Simulador Integrado */}
+          <motion.div variants={itemVariants}>
+            <MarketplaceSimulator rate={offer.rate} maxTerm={offer.term} maxAmount={offer.maxAmount} />
+          </motion.div>
+
           <motion.div variants={itemVariants} className={styles.section}>
             <div className={styles.sectionTitle}>
               <Activity size={20} /> Tipos Aceitos
@@ -142,106 +220,27 @@ export function CreditLineDetails() {
             </div>
           </motion.div>
 
-          <motion.div variants={itemVariants} className={styles.section} style={{ background: 'linear-gradient(180deg, #111, #222)', color: '#fff' }}>
-            <div className={styles.sectionTitle} style={{ color: '#fff' }}>
+          <motion.div variants={itemVariants} className={`${styles.section} ${styles.darkSection}`}>
+            <div className={styles.sectionTitle} style={{ color: '#fff', borderBottomColor: 'rgba(255,255,255,0.1)' }}>
               <Users size={20} color="#fff" /> Histórico do Investidor
             </div>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+            <div className={styles.darkStats}>
               <div>
-                <div style={{ fontSize: '12px', color: '#aaa', marginBottom: '4px' }}>Volume Financiado</div>
-                <div style={{ fontSize: '20px', fontWeight: '600' }}>{offer.volume}</div>
+                <div className={styles.darkStatLabel}>Volume Financiado</div>
+                <div className={styles.darkStatValue}>{offer.volume}</div>
               </div>
               <div>
-                <div style={{ fontSize: '12px', color: '#aaa', marginBottom: '4px' }}>Operações Concluídas</div>
-                <div style={{ fontSize: '20px', fontWeight: '600' }}>142 operações</div>
+                <div className={styles.darkStatLabel}>Operações Concluídas</div>
+                <div className={styles.darkStatValue}>342 operações</div>
+              </div>
+              <div>
+                <div className={styles.darkStatLabel}>Capital Comprometido Atual</div>
+                <div className={styles.darkStatValue}>R$ 45.000.000</div>
               </div>
             </div>
           </motion.div>
         </div>
       </div>
-
-      {/* Modal de Solicitação */}
-      <AnimatePresence>
-        {isModalOpen && (
-          <motion.div 
-            className={styles.modalOverlay}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-          >
-            <motion.div 
-              className={styles.modalContent}
-              initial={{ scale: 0.95, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.95, opacity: 0 }}
-            >
-              <button className={styles.closeModalBtn} onClick={() => setIsModalOpen(false)}>
-                <X size={20} />
-              </button>
-
-              {isSuccess ? (
-                <div style={{ textAlign: 'center', padding: '40px 0' }}>
-                  <motion.div 
-                    initial={{ scale: 0 }} 
-                    animate={{ scale: 1 }} 
-                    style={{ color: '#10b981', display: 'flex', justifyContent: 'center', marginBottom: '24px' }}
-                  >
-                    <CheckCircle2 size={64} />
-                  </motion.div>
-                  <h2 style={{ fontSize: '24px', fontWeight: '600', marginBottom: '12px' }}>Solicitação Enviada!</h2>
-                  <p style={{ color: '#666' }}>O investidor foi notificado e sua proposta está em análise.</p>
-                </div>
-              ) : (
-                <>
-                  <h2 className={styles.modalTitle}>Solicitar Linha de Crédito</h2>
-                  <p className={styles.modalSubtitle}>Envie sua proposta para {offer.investor}.</p>
-
-                  <form className={styles.modalForm} onSubmit={handleRequestSubmit}>
-                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
-                      <div className={styles.formGroup}>
-                        <label className={styles.label}>Valor Desejado</label>
-                        <input type="text" className={styles.input} placeholder="R$ 0,00" required />
-                      </div>
-                      <div className={styles.formGroup}>
-                        <label className={styles.label}>Prazo Proposto (meses)</label>
-                        <input type="number" className={styles.input} placeholder="Ex: 24" required />
-                      </div>
-                    </div>
-
-                    <div className={styles.formGroup}>
-                      <label className={styles.label}>Finalidade do Crédito</label>
-                      <select className={styles.input} required>
-                        <option value="">Selecione uma opção...</option>
-                        {offer.acceptedTypes.map((type, i) => (
-                          <option key={i} value={type}>{type}</option>
-                        ))}
-                      </select>
-                    </div>
-
-                    <div className={styles.formGroup}>
-                      <label className={styles.label}>Observações e Detalhes da Operação</label>
-                      <textarea className={`${styles.input} ${styles.textarea}`} placeholder="Explique brevemente como o capital será utilizado e quais garantias você pretende ofertar..." required />
-                    </div>
-
-                    <div className={styles.formGroup}>
-                      <label className={styles.label}>Documentos Anexos</label>
-                      <div className={styles.fileUpload}>
-                        <UploadCloud size={24} />
-                        <span>Arraste seus documentos estruturais aqui ou clique para selecionar</span>
-                        <span style={{ fontSize: '12px', color: '#999' }}>(Balanço, DRE, Apresentação Institucional)</span>
-                      </div>
-                    </div>
-
-                    <button type="submit" className={styles.submitModalBtn}>
-                      Enviar Solicitação de Crédito
-                    </button>
-                  </form>
-                </>
-              )}
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
     </motion.div>
   );
 }

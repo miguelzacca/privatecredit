@@ -1,0 +1,328 @@
+.card {
+  background: #fff;
+  border-radius: 24px;
+  padding: 32px;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow: hidden;
+  will-change: transform, box-shadow;
+}
+
+.card:hover {
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+  border-color: rgba(0, 0, 0, 0.1);
+}
+
+.cardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 28px;
+}
+
+.investorInfo {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.investorAvatar {
+  width: 56px;
+  height: 56px;
+  border-radius: 16px;
+  background: linear-gradient(135deg, #111, #333);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 22px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.investorDetails {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.offerTitle {
+  font-size: 18px;
+  font-weight: 700;
+  color: #111;
+  letter-spacing: -0.02em;
+}
+
+.investorName {
+  font-size: 14px;
+  font-weight: 500;
+  color: #666;
+}
+
+.badgesWrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+}
+
+.badge {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.badgeSuccess {
+  background: rgba(16, 185, 129, 0.1);
+  color: #059669;
+}
+
+.badgePremium {
+  background: rgba(245, 158, 11, 0.1);
+  color: #d97706;
+}
+
+.badgeWarning {
+  background: rgba(239, 68, 68, 0.1);
+  color: #dc2626;
+}
+
+.badgeDefault {
+  background: rgba(0, 0, 0, 0.04);
+  color: #444;
+}
+
+.mainContent {
+  flex: 1;
+}
+
+.statsRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  margin-bottom: 32px;
+}
+
+.mainStat {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.statLabel {
+  font-size: 13px;
+  color: #666;
+  font-weight: 500;
+}
+
+.statValue {
+  font-size: 26px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: #111;
+}
+
+.statValue.highlight {
+  color: #10b981;
+}
+
+.statSub {
+  font-size: 12px;
+  color: #888;
+  font-weight: 500;
+  margin-top: 2px;
+}
+
+.metricsGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  padding: 24px 0;
+  border-top: 1px solid rgba(0,0,0,0.06);
+  border-bottom: 1px solid rgba(0,0,0,0.06);
+  margin-bottom: 24px;
+}
+
+.metricItem {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  color: #555;
+}
+
+.metricItem svg {
+  margin-top: 2px;
+  color: #888;
+}
+
+.metricTexts {
+  display: flex;
+  flex-direction: column;
+}
+
+.metricLabel {
+  font-size: 12px;
+  color: #888;
+  margin-bottom: 2px;
+}
+
+.metricValue {
+  font-size: 14px;
+  font-weight: 500;
+  color: #111;
+}
+
+.cardFooter {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: auto;
+}
+
+.footerActions {
+  display: flex;
+  gap: 8px;
+}
+
+.iconBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: transparent;
+  border: 1px solid rgba(0,0,0,0.08);
+  color: #666;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.iconBtn:hover {
+  background: #f4f4f5;
+  color: #111;
+  border-color: rgba(0,0,0,0.15);
+}
+
+.mainActions {
+  display: flex;
+  gap: 12px;
+}
+
+.detailsBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 20px;
+  height: 44px;
+  border-radius: 12px;
+  background: #f8f8f8;
+  color: #111;
+  font-weight: 600;
+  font-size: 14px;
+  text-decoration: none;
+  transition: all 0.2s;
+}
+
+.detailsBtn:hover {
+  background: #eee;
+}
+
+.primaryBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 0 24px;
+  height: 44px;
+  border-radius: 12px;
+  background: #111;
+  color: #fff;
+  font-weight: 600;
+  font-size: 14px;
+  text-decoration: none;
+  transition: all 0.2s;
+}
+
+.primaryBtn:hover {
+  background: #333;
+}
+
+/* List Mode Styles */
+.listMode {
+  flex-direction: row;
+  align-items: center;
+  padding: 24px 32px;
+}
+
+.listMode .cardHeader {
+  width: 250px;
+  margin-bottom: 0;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.listMode .badgesWrapper {
+  align-items: flex-start;
+  flex-direction: row;
+}
+
+.listMode .mainContent {
+  display: flex;
+  align-items: center;
+  flex: 1;
+  gap: 40px;
+  padding: 0 40px;
+  border-left: 1px solid rgba(0,0,0,0.06);
+  border-right: 1px solid rgba(0,0,0,0.06);
+  margin: 0 32px;
+}
+
+.listMode .statsRow {
+  margin-bottom: 0;
+  gap: 40px;
+}
+
+.listMode .metricsGrid {
+  border: none;
+  padding: 0;
+  margin: 0;
+  grid-template-columns: 1fr;
+  gap: 16px;
+}
+
+.listMode .cardFooter {
+  flex-direction: column;
+  gap: 16px;
+  margin-top: 0;
+}
+
+@media (max-width: 1200px) {
+  .listMode {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .listMode .cardHeader {
+    width: 100%;
+    margin-bottom: 24px;
+    flex-direction: row;
+  }
+  .listMode .mainContent {
+    flex-direction: column;
+    align-items: stretch;
+    border: none;
+    padding: 0;
+    margin: 0;
+  }
+  .listMode .cardFooter {
+    flex-direction: row;
+    margin-top: 24px;
+  }
+}

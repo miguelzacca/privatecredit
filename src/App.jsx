@@ -16,6 +16,8 @@ import { PublishCreditLine } from './pages/Dashboard/Investidor/PublishCreditLin
 import { ManageCreditLine } from './pages/Dashboard/Investidor/ManageCreditLine';
 import { Marketplace } from './pages/Dashboard/Marketplace/Marketplace';
 import { CreditLineDetails } from './pages/Dashboard/Marketplace/CreditLineDetails';
+import { SolicitationWizard } from './pages/Dashboard/Marketplace/SolicitationWizard';
+import { SavedLines } from './pages/Dashboard/Marketplace/SavedLines';
 
 function App() {
   return (
@@ -47,7 +49,9 @@ function App() {
             <Route path="empresa" element={<EmpresaDashboard />} />
             <Route path="marketplace">
               <Route index element={<Marketplace />} />
+              <Route path="salvas" element={<SavedLines />} />
               <Route path=":id" element={<CreditLineDetails />} />
+              <Route path=":id/solicitar" element={<SolicitationWizard />} />
             </Route>
           </Route>
         </Route>

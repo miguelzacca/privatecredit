@@ -1,0 +1,242 @@
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.5);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+}
+
+.modal {
+  background: #fff;
+  width: 100%;
+  max-width: 1200px;
+  height: 90vh;
+  border-radius: 32px;
+  box-shadow: 0 32px 64px rgba(0,0,0,0.2);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.header {
+  padding: 32px 40px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid rgba(0,0,0,0.06);
+  background: #fcfcfc;
+}
+
+.titleArea {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.titleArea h2 {
+  font-size: 24px;
+  font-weight: 700;
+  color: #111;
+  letter-spacing: -0.02em;
+}
+
+.count {
+  background: #111;
+  color: #fff;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.closeBtn {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: none;
+  background: transparent;
+  color: #666;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.closeBtn:hover {
+  background: rgba(0,0,0,0.05);
+  color: #111;
+}
+
+.tableWrapper {
+  flex: 1;
+  overflow: auto;
+  padding: 40px;
+}
+
+.compareTable {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.featureColumn {
+  width: 200px;
+  text-align: left;
+  font-weight: 600;
+  color: #888;
+  padding-right: 24px;
+}
+
+.offerColumn {
+  width: 250px;
+  padding: 0 12px 32px 12px;
+  vertical-align: top;
+}
+
+.emptyColumn {
+  width: 250px;
+  padding: 0 12px 32px 12px;
+}
+
+.emptySlot {
+  height: 120px;
+  border: 2px dashed rgba(0,0,0,0.1);
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #aaa;
+  font-weight: 500;
+  background: #fafafa;
+}
+
+.offerHeader {
+  position: relative;
+  background: #fff;
+  border: 1px solid rgba(0,0,0,0.08);
+  border-radius: 24px;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.02);
+}
+
+.removeBtn {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: rgba(0,0,0,0.04);
+  border: none;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: #666;
+  transition: all 0.2s;
+}
+
+.removeBtn:hover {
+  background: #ffe4e6;
+  color: #e11d48;
+}
+
+.investorAvatar {
+  width: 56px;
+  height: 56px;
+  border-radius: 16px;
+  background: linear-gradient(135deg, #111, #333);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 22px;
+  margin-bottom: 12px;
+}
+
+.investorName {
+  font-size: 13px;
+  color: #666;
+  margin-bottom: 4px;
+}
+
+.offerTitle {
+  font-size: 16px;
+  font-weight: 600;
+  color: #111;
+}
+
+.compareTable tbody td {
+  padding: 20px 12px;
+  border-top: 1px solid rgba(0,0,0,0.06);
+}
+
+.featureName {
+  font-weight: 600;
+  color: #444;
+  font-size: 15px;
+}
+
+.valueCell {
+  text-align: center;
+  font-size: 15px;
+  color: #555;
+}
+
+.valueCell strong {
+  font-size: 18px;
+  color: #111;
+}
+
+.highlightCell {
+  color: #10b981;
+  font-weight: 700;
+  font-size: 18px;
+}
+
+.ratingBadge {
+  background: #fffbeb;
+  color: #d97706;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.actionRow td {
+  border-top: none;
+  padding-top: 32px;
+}
+
+.applyBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  height: 48px;
+  background: #111;
+  color: #fff;
+  border-radius: 12px;
+  text-decoration: none;
+  font-weight: 600;
+  transition: all 0.2s;
+}
+
+.applyBtn:hover {
+  background: #333;
+  transform: translateY(-2px);
+}
