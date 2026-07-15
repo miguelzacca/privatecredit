@@ -3,6 +3,8 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, ArrowRight, ArrowLeft, Building2, HardHat, Briefcase, Truck, User, FileText, Home, BadgeDollarSign, ShieldCheck, FileSignature, AlertCircle, CheckCircle2, Loader2, Landmark, Save } from 'lucide-react';
 import axios from 'axios';
+import { useAuth } from '../../../contexts/AuthContext';
+import { InvestorProfileWizard } from './InvestorProfileWizard';
 import styles from './PublishCreditLine.module.css';
 
 // --- Premium Components ---
@@ -35,6 +37,7 @@ export function PublishCreditLine() {
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
   const editId = queryParams.get('edit');
+  const { user } = useAuth();
   
   // State Machine
   const [step, setStep] = useState(1);
@@ -246,6 +249,12 @@ export function PublishCreditLine() {
           <Skeleton width="600px" height="120px" borderRadius="24px" />
         </main>
       </div>
+    );
+  }
+
+  if (user && !user.investorProfileCompleted) {
+    return (
+      <InvestorProfileWizard onComplete={() => window.location.reload()} />
     );
   }
 

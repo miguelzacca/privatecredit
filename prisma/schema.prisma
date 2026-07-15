@@ -18,6 +18,8 @@ model User {
   image      String?
   phone      String?
   profile    String?
+  investorProfileCompleted Boolean @default(false)
+  investorProfile InvestorProfile?
   properties  Property[]
   creditLines CreditLine[]
   createdAt   DateTime     @default(now())
@@ -69,4 +71,40 @@ model CreditLine {
   userId        String
   user          User     @relation(fields: [userId], references: [id])
   createdAt     DateTime @default(now())
+}
+
+model InvestorProfile {
+  id        String   @id @default(uuid())
+  cpf       String   @unique
+  fullName  String
+  birthDate String?
+  gender    String?
+  motherName String?
+  rg        String?
+  statusRFB String?
+  
+  // Address
+  cep       String?
+  number    String?
+  complement String?
+  street    String?
+  neighborhood String?
+  city      String?
+  state     String?
+  
+  // Bank details
+  bank      String?
+  agency    String?
+  account   String?
+  accountType String?
+  pix       String?
+  
+  // Declarations & Terms
+  acceptedTerms Boolean @default(false)
+  signature String? @db.Text
+
+  userId    String  @unique
+  user      User    @relation(fields: [userId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }

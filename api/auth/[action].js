@@ -439,6 +439,7 @@ export default async function handler(req, res) {
           phone: true,
           cpf: true,
           profile: true,
+          investorProfileCompleted: true,
         },
       })
 
