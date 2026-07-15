@@ -1,23 +1,25 @@
 /* DESIGN TOKENS */
 :root {
   /* Colors - 100% Light Mode */
-  --color-bg-base: #FCFCFD;
-  --color-bg-alt: #FAFAFA;
-  --color-bg-surface: #FFFFFF;
-  
-  --color-text-primary: #09090B;
-  --color-text-secondary: #52525B;
-  --color-text-tertiary: #A1A1AA;
-  
+  --color-bg-base: #fcfcfd;
+  --color-bg-alt: #fafafa;
+  --color-bg-surface: #ffffff;
+
+  --color-text-primary: #09090b;
+  --color-text-secondary: #52525b;
+  --color-text-tertiary: #a1a1aa;
+
   --color-border-subtle: rgba(0, 0, 0, 0.03);
   --color-border-default: rgba(0, 0, 0, 0.08);
-  
+
   --color-accent: #000000;
-  --color-accent-hover: #27272A;
-  
+  --color-accent-hover: #27272a;
+
   /* Typography */
-  --font-sans: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-  
+  --font-sans:
+    'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+    'Helvetica Neue', Arial, sans-serif;
+
   /* Spacing (in rem) */
   --spacing-1: 0.25rem;
   --spacing-2: 0.5rem;
@@ -31,14 +33,17 @@
   --spacing-24: 6rem;
   --spacing-32: 8rem;
   --spacing-40: 10rem;
-  
+
   /* Shadows */
   --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.02);
-  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.03), 0 2px 4px -2px rgba(0, 0, 0, 0.03);
-  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.04), 0 4px 6px -4px rgba(0, 0, 0, 0.04);
-  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.04), 0 8px 10px -6px rgba(0, 0, 0, 0.04);
+  --shadow-md:
+    0 4px 6px -1px rgba(0, 0, 0, 0.03), 0 2px 4px -2px rgba(0, 0, 0, 0.03);
+  --shadow-lg:
+    0 10px 15px -3px rgba(0, 0, 0, 0.04), 0 4px 6px -4px rgba(0, 0, 0, 0.04);
+  --shadow-xl:
+    0 20px 25px -5px rgba(0, 0, 0, 0.04), 0 8px 10px -6px rgba(0, 0, 0, 0.04);
   --shadow-glow: 0 0 60px rgba(0, 0, 0, 0.03);
-  
+
   /* Radii */
   --radius-sm: 0.25rem;
   --radius-md: 0.5rem;
@@ -46,19 +51,25 @@
   --radius-xl: 1.5rem;
   --radius-2xl: 2rem;
   --radius-full: 9999px;
-  
+
   /* Layout */
   --container-width: 1200px;
 }
 
 /* RESET & BASE */
-*, *::before, *::after {
+*,
+*::before,
+*::after {
   box-sizing: border-box;
 }
 
 * {
   margin: 0;
   padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
 }
 
 body {
@@ -72,7 +83,12 @@ body {
 }
 
 /* Typography Base */
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   line-height: 1.1;
   font-weight: 600;
   letter-spacing: -0.02em;
@@ -87,7 +103,8 @@ a {
   color: inherit;
 }
 
-ul, ol {
+ul,
+ol {
   list-style: none;
 }
 
@@ -108,7 +125,8 @@ button {
 }
 
 /* Lenis recommended setup */
-html.lenis, html.lenis body {
+html.lenis,
+html.lenis body {
   height: auto;
 }
 
