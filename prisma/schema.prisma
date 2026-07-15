@@ -1,0 +1,54 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["driverAdapters"]
+}
+
+model User {
+  id         String       @id @default(uuid())
+  name       String
+  email      String       @unique
+  password   String
+  creci      String?
+  cpf        String?
+  image      String?
+  phone      String?
+  properties Property[]
+  createdAt  DateTime     @default(now())
+}
+
+model MagicToken {
+  id         String   @id @default(uuid())
+  token      String   @unique
+  email      String
+  name       String?
+  isRegister Boolean  @default(false)
+  expiresAt  DateTime
+  used       Boolean  @default(false)
+  createdAt  DateTime @default(now())
+}
+
+model Property {
+  id          Int      @id @default(autoincrement())
+  slug        String?  @unique
+  title       String
+  description String
+  price       Float
+  adType        String   @default("venda") // "venda" | "aluguel"
+  features      String   // Stored as JSON string or comma-separated
+  bedrooms      Int      @default(0)
+  bathrooms     Int      @default(0)
+  parkingSpaces Int      @default(0)
+  area          Float    @default(0)
+  images        String?  @db.Text
+  isFeatured    Boolean  @default(false)
+  city          String?
+  state         String?
+  userId        String
+  user          User     @relation(fields: [userId], references: [id])
+  createdAt   DateTime @default(now())
+}

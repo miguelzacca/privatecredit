@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, useScroll, useMotionValueEvent } from 'framer-motion';
+import { Link } from 'react-router-dom';
 import clsx from 'clsx';
 import { Button } from './Button';
 import styles from './Navbar.module.css';
@@ -43,8 +44,12 @@ export function Navbar() {
         </div>
 
         <div className={styles.actions}>
-          <Button variant="ghost" size="sm" className={styles.loginBtn}>Entrar</Button>
-          <Button variant="primary" size="sm">Começar</Button>
+          <Link to="/login">
+            <Button variant="ghost" size="sm" className={styles.loginBtn}>Entrar</Button>
+          </Link>
+          <Link to="/login">
+            <Button variant="primary" size="sm">Começar</Button>
+          </Link>
         </div>
       </div>
     </motion.nav>
