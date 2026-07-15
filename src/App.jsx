@@ -13,6 +13,7 @@ import { ConstrutoraDashboard } from './pages/Dashboard/Construtora/ConstrutoraD
 import { FornecedorDashboard } from './pages/Dashboard/Fornecedor/FornecedorDashboard';
 import { EmpresaDashboard } from './pages/Dashboard/Empresa/EmpresaDashboard';
 import { PublishCreditLine } from './pages/Dashboard/Investidor/PublishCreditLine';
+import { ManageCreditLine } from './pages/Dashboard/Investidor/ManageCreditLine';
 import { Marketplace } from './pages/Dashboard/Marketplace/Marketplace';
 import { CreditLineDetails } from './pages/Dashboard/Marketplace/CreditLineDetails';
 
@@ -36,6 +37,7 @@ function App() {
             <Route path="investidor">
               <Route index element={<InvestidorDashboard />} />
               <Route path="nova-linha" element={<PublishCreditLine />} />
+              <Route path="linhas/:id" element={<ManageCreditLine />} />
             </Route>
             <Route path="corretor" element={<CorretorDashboard />} />
             <Route path="construtora" element={<ConstrutoraDashboard />} />
