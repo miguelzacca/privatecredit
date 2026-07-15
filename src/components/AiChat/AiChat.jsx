@@ -83,6 +83,7 @@ function Message({ msg }) {
 
   return (
     <motion.div 
+      id={`msg-${msg.id}`}
       initial={{ opacity: 0, y: 10, filter: 'blur(5px)' }}
       animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
       transition={{ duration: 0.4, type: 'spring', bounce: 0.3 }}
@@ -119,8 +120,21 @@ export function AiChat() {
   const currentSuggestions = getSuggestions(contextName);
 
   useEffect(() => {
-    if (messagesEndRef.current && isOpen) {
-      messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
+    if (!isOpen) return;
+
+    if (isLoading) {
+      messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    } else if (messages.length > 0) {
+      const lastMsg = messages[messages.length - 1];
+      if (lastMsg.role === 'assistant') {
+        // Scroll to the top of the assistant's message
+        const el = document.getElementById(`msg-${lastMsg.id}`);
+        if (el) {
+          el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      } else {
+        messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+      }
     }
   }, [messages, isLoading, isOpen]);
 
