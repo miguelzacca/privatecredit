@@ -50,8 +50,8 @@ export function Hero() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.8, duration: 0.8 }}
           >
-            <Button size="lg" icon={ArrowRight}>Abrir conta</Button>
-            <Button size="lg" variant="secondary">Falar com especialista</Button>
+            <Button size="lg" icon={ArrowRight} aria-label="Abrir uma conta gratuita">Abrir conta</Button>
+            <Button size="lg" variant="secondary" aria-label="Falar com um especialista em crédito">Falar com especialista</Button>
           </motion.div>
         </motion.div>
 

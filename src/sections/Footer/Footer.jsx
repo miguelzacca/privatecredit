@@ -31,31 +31,33 @@ export function Footer() {
           </div>
           
           <div className={styles.linksGrid}>
-            <div>
+            <nav aria-label="Navegação da Plataforma">
               <h4>Plataforma</h4>
               <a href="#">Para Originadores</a>
               <a href="#">Para Investidores</a>
               <a href="#">Tecnologia</a>
               <a href="#">Segurança</a>
-            </div>
-            <div>
+            </nav>
+            <nav aria-label="Navegação Institucional">
               <h4>Empresa</h4>
               <a href="#">Sobre nós</a>
               <a href="#">Carreiras</a>
               <a href="#">Contato</a>
               <a href="#">Imprensa</a>
-            </div>
-            <div>
+            </nav>
+            <nav aria-label="Navegação Legal">
               <h4>Legal</h4>
               <a href="#">Termos de Uso</a>
               <a href="#">Privacidade</a>
               <a href="#">Compliance</a>
-            </div>
+            </nav>
           </div>
         </div>
         
         <div className={styles.copyright}>
-          <p>© {new Date().getFullYear()} LOGO S.A. Todos os direitos reservados.</p>
+          <address style={{ fontStyle: 'normal' }}>
+            <p>© {new Date().getFullYear()} LOGO S.A. Todos os direitos reservados.</p>
+          </address>
         </div>
         
       </div>

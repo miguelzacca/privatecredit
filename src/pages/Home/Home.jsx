@@ -9,6 +9,9 @@ import { Metrics } from '../../sections/Metrics/Metrics';
 import { Security } from '../../sections/Security/Security';
 import { Footer } from '../../sections/Footer/Footer';
 import { CreditSimulator } from '../../sections/CreditSimulator/CreditSimulator';
+import { SEOManager } from '../../lib/seo/SEOManager';
+import { StructuredData } from '../../lib/seo/StructuredData';
+import { organizationSchema, financialServiceSchema, webSiteSchema } from '../../lib/seo/schemas';
 
 export function Home() {
   useEffect(() => {
@@ -38,6 +41,10 @@ export function Home() {
 
   return (
     <>
+      <SEOManager />
+      <StructuredData data={webSiteSchema} />
+      <StructuredData data={organizationSchema} />
+      <StructuredData data={financialServiceSchema} />
       <Navbar />
       <main>
         <Hero />

@@ -106,7 +106,7 @@ export function Flow() {
                     <step.icon size={24} />
                   </div>
                   <div>
-                    <h4 className={styles.stepTitle}>{step.title}</h4>
+                    <h3 className={styles.stepTitle}>{step.title}</h3>
                     <p className={styles.stepDesc}>{step.desc}</p>
                   </div>
                 </GlassCard>

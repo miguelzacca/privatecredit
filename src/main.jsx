@@ -2,6 +2,7 @@ import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { GoogleOAuthProvider } from '@react-oauth/google'
 import { BrowserRouter } from 'react-router-dom'
+import { HelmetProvider } from 'react-helmet-async'
 import axios from 'axios'
 import './index.css'
 import App from './App.jsx'
@@ -24,11 +25,13 @@ axios.interceptors.request.use((config) => {
 axios.get('/api/auth/csrf').catch(err => console.error('Error fetching CSRF:', err)).finally(() => {
   createRoot(document.getElementById('root')).render(
     <StrictMode>
-      <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID || 'COLOQUE_SEU_CLIENT_ID_AQUI'}>
-        <BrowserRouter>
-          <App />
-        </BrowserRouter>
-      </GoogleOAuthProvider>
+      <HelmetProvider>
+        <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID || 'COLOQUE_SEU_CLIENT_ID_AQUI'}>
+          <BrowserRouter>
+            <App />
+          </BrowserRouter>
+        </GoogleOAuthProvider>
+      </HelmetProvider>
     </StrictMode>,
   )
 });
