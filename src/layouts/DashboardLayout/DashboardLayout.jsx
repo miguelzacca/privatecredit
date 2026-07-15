@@ -115,7 +115,7 @@ export function DashboardLayout({ title = 'Dashboard' }) {
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
             <path d="M12 2L2 22H22L12 2Z" fill="black" />
           </svg>
-          <span className={styles.brandText}>White Private Credit</span>
+          <span className={styles.brandText}>Private Credit</span>
         </div>
 
         <nav className={styles.nav}>

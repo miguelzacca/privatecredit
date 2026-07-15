@@ -116,7 +116,7 @@ export function Onboarding() {
           <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
             <path d="M12 2L2 22H22L12 2Z" fill="black" />
           </svg>
-          White Private Credit
+          Private Credit
         </motion.div>
 
         <motion.h1 
