@@ -78,11 +78,7 @@ export function Hero() {
               </div>
             </GlassCard>
 
-            <motion.div 
-              className={styles.floatingCard1}
-              animate={{ y: [0, -10, 0] }}
-              transition={{ repeat: Infinity, duration: 4, ease: "easeInOut" }}
-            >
+            <div className={styles.floatingCard1}>
               <GlassCard className={styles.miniCard}>
                 <Lock size={18} className={styles.iconBlue} />
                 <div>
@@ -90,13 +86,9 @@ export function Hero() {
                   <div className={styles.miniValue}>Ativa</div>
                 </div>
               </GlassCard>
-            </motion.div>
+            </div>
 
-            <motion.div 
-              className={styles.floatingCard2}
-              animate={{ y: [0, 15, 0] }}
-              transition={{ repeat: Infinity, duration: 5, ease: "easeInOut", delay: 1 }}
-            >
+            <div className={styles.floatingCard2}>
               <GlassCard className={styles.miniCard}>
                 <TrendingUp size={18} className={styles.iconGreen} />
                 <div>
@@ -104,7 +96,7 @@ export function Hero() {
                   <div className={styles.miniValue}>18.5%</div>
                 </div>
               </GlassCard>
-            </motion.div>
+            </div>
           </div>
         </motion.div>
       </div>

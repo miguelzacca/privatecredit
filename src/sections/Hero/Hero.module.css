@@ -149,11 +149,23 @@
   transition: height 1s ease;
 }
 
+@keyframes float1 {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-15px); }
+}
+
+@keyframes float2 {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(15px); }
+}
+
 .floatingCard1 {
   position: absolute;
   top: 10%;
   right: -10%;
   z-index: 10;
+  animation: float1 4s ease-in-out infinite;
+  will-change: transform;
 }
 
 .floatingCard2 {
@@ -161,6 +173,9 @@
   bottom: 20%;
   left: -15%;
   z-index: 10;
+  animation: float2 5s ease-in-out infinite;
+  animation-delay: 1s;
+  will-change: transform;
 }
 
 .miniCard {
