@@ -22,6 +22,7 @@ const itemVariants = {
 export function InvestidorDashboard() {
   const [filter, setFilter] = useState('ativas');
   const [creditLines, setCreditLines] = useState([]);
+  const [rawLines, setRawLines] = useState([]);
   const [loading, setLoading] = useState(true);
   const { user } = useAuth();
 
@@ -29,6 +30,7 @@ export function InvestidorDashboard() {
     if (user?.id) {
       axios.get(`/api/credit-lines?userId=${user.id}`)
         .then(res => {
+          setRawLines(res.data.data);
           // Format them to match what the dashboard expects
           const formatted = res.data.data.map(line => ({
             id: line.id,
@@ -48,11 +50,19 @@ export function InvestidorDashboard() {
     }
   }, [user]);
 
+  // Calculate dynamic stats
+  const totalCapital = rawLines.reduce((acc, line) => acc + (line.capital || 0), 0);
+  const avgRate = rawLines.length > 0 
+    ? (rawLines.reduce((acc, line) => acc + (line.interestRate || 0), 0) / rawLines.length) 
+    : 0;
+
+  const formatCurrency = (val) => new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', minimumFractionDigits: 0 }).format(val);
+
   const stats = [
-    { label: 'Capital Disponível', value: 'R$ 2.500.000', icon: Wallet, trend: '+12%', isUp: true },
-    { label: 'Capital Comprometido', value: 'R$ 8.450.000', icon: DollarSign, trend: '+5.4%', isUp: true },
-    { label: 'Rentabilidade Média', value: '3.2% a.m.', icon: TrendingUp, trend: '+0.2%', isUp: true },
-    { label: 'Operações Ativas', value: creditLines.length.toString(), icon: Activity, trend: 'Estável', isUp: true },
+    { label: 'Capital Disponível', value: formatCurrency(totalCapital), icon: Wallet, trend: 'Atualizado', isUp: true },
+    { label: 'Capital Comprometido', value: 'R$ 0', icon: DollarSign, trend: 'Novo', isUp: true },
+    { label: 'Rentabilidade Média', value: `${avgRate.toFixed(2)}% a.m.`, icon: TrendingUp, trend: 'Atualizado', isUp: true },
+    { label: 'Operações Ativas', value: creditLines.length.toString(), icon: Activity, trend: 'Atualizado', isUp: true },
   ];
 
   const filteredLines = creditLines.filter(line => {
