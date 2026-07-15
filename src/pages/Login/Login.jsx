@@ -213,14 +213,7 @@ export default function Login() {
                 </motion.div>
               )}
 
-              <div style={{ marginBottom: '20px', display: 'flex', justifyContent: 'center' }}>
-                <Turnstile
-                  siteKey={import.meta.env.VITE_TURNSTILE_SITE_KEY}
-                  onSuccess={(token) => setTurnstileToken(token)}
-                  onError={() => setError('Erro ao carregar verificação de segurança.')}
-                  options={{ theme: 'light' }}
-                />
-              </div>
+
 
               <GoogleButton
                 onClick={() => loginWithGoogle()}
@@ -260,6 +253,15 @@ export default function Login() {
                       Por favor, insira um e-mail válido.
                     </motion.p>
                   )}
+                </div>
+                
+                <div style={{ marginBottom: '20px', display: 'flex', justifyContent: 'center', width: '100%' }}>
+                  <Turnstile
+                    siteKey={import.meta.env.VITE_TURNSTILE_SITE_KEY || '1x00000000000000000000AA'}
+                    onSuccess={(token) => setTurnstileToken(token)}
+                    onError={() => setError('Erro ao carregar verificação de segurança.')}
+                    options={{ theme: 'light' }}
+                  />
                 </div>
 
                 <motion.button
