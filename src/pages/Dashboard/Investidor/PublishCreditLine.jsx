@@ -433,19 +433,31 @@ export function PublishCreditLine() {
             >
               <div className={`${styles.valStep} ${validationStep >= 0 ? styles.active : ''}`}>
                 <div className={styles.valIconWrapper}>
-                  {validationStep > 0 ? <CheckCircle2 size={16} /> : <Loader2 size={16} className="animate-spin" />}
+                  {validationStep > 0 ? (
+                    <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ type: 'spring', stiffness: 400, damping: 25 }}>
+                      <CheckCircle2 size={16} />
+                    </motion.div>
+                  ) : <Loader2 size={16} className="animate-spin" />}
                 </div>
                 Validando estrutura...
               </div>
               <div className={`${styles.valStep} ${validationStep >= 1 ? styles.active : ''}`}>
                 <div className={styles.valIconWrapper}>
-                  {validationStep > 1 ? <CheckCircle2 size={16} /> : validationStep === 1 ? <Loader2 size={16} className="animate-spin" /> : null}
+                  {validationStep > 1 ? (
+                    <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ type: 'spring', stiffness: 400, damping: 25 }}>
+                      <CheckCircle2 size={16} />
+                    </motion.div>
+                  ) : validationStep === 1 ? <Loader2 size={16} className="animate-spin" /> : null}
                 </div>
                 Verificando condições...
               </div>
               <div className={`${styles.valStep} ${validationStep >= 2 ? styles.active : ''}`}>
                 <div className={styles.valIconWrapper}>
-                  {validationStep > 2 ? <CheckCircle2 size={16} /> : validationStep === 2 ? <Loader2 size={16} className="animate-spin" /> : null}
+                  {validationStep > 2 ? (
+                    <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ type: 'spring', stiffness: 400, damping: 25 }}>
+                      <CheckCircle2 size={16} />
+                    </motion.div>
+                  ) : validationStep === 2 ? <Loader2 size={16} className="animate-spin" /> : null}
                 </div>
                 Preparando disponibilidade...
               </div>

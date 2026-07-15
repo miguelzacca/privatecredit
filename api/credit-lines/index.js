@@ -13,7 +13,11 @@ export default async function handler(req, res) {
   // GET: Fetch credit lines for the Marketplace
   if (req.method === 'GET') {
     try {
+      const { userId } = req.query;
+      const whereClause = userId ? { userId } : {};
+
       const creditLines = await prisma.creditLine.findMany({
+        where: whereClause,
         orderBy: { createdAt: 'desc' },
         include: {
           user: {

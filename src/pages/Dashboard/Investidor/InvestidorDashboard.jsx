@@ -1,7 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { TrendingUp, Wallet, ArrowUpRight, Plus, Activity, Clock, DollarSign, ChevronRight } from 'lucide-react';
+import axios from 'axios';
+import { useAuth } from '../../../contexts/AuthContext';
 import styles from './InvestidorDashboard.module.css';
 
 const containerVariants = {
@@ -19,19 +21,43 @@ const itemVariants = {
 
 export function InvestidorDashboard() {
   const [filter, setFilter] = useState('ativas');
+  const [creditLines, setCreditLines] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const { user } = useAuth();
+
+  useEffect(() => {
+    if (user?.id) {
+      axios.get(`/api/credit-lines?userId=${user.id}`)
+        .then(res => {
+          // Format them to match what the dashboard expects
+          const formatted = res.data.data.map(line => ({
+            id: line.id,
+            name: `Linha Premium - ${line.term}`,
+            available: line.maxAmount,
+            rate: line.rate,
+            term: line.term,
+            status: 'ativa', // Fixed as active for demo
+            tags: line.tags
+          }));
+          setCreditLines(formatted);
+        })
+        .catch(err => console.error('Error fetching dashboard lines:', err))
+        .finally(() => setLoading(false));
+    } else {
+      setLoading(false);
+    }
+  }, [user]);
 
   const stats = [
     { label: 'Capital Disponível', value: 'R$ 2.500.000', icon: Wallet, trend: '+12%', isUp: true },
     { label: 'Capital Comprometido', value: 'R$ 8.450.000', icon: DollarSign, trend: '+5.4%', isUp: true },
     { label: 'Rentabilidade Média', value: '3.2% a.m.', icon: TrendingUp, trend: '+0.2%', isUp: true },
-    { label: 'Operações Ativas', value: '42', icon: Activity, trend: 'Estável', isUp: true },
+    { label: 'Operações Ativas', value: creditLines.length.toString(), icon: Activity, trend: 'Estável', isUp: true },
   ];
-
-  const creditLines = []; // Removido mocks a pedido do usuário
 
   const filteredLines = creditLines.filter(line => {
     if (filter === 'todas') return true;
-    return line.status === filter;
+    return line.status === filter || (filter === 'ativas' && line.status === 'ativa') || (filter === 'pausadas' && line.status === 'pausada');
   });
 
   return (
