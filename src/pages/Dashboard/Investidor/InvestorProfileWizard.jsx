@@ -1,11 +1,12 @@
-import React, { useState, useRef } from 'react';
+import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
-  ArrowRight, ArrowLeft, Check, ShieldCheck, 
-  MapPin, Landmark, FileSignature, AlertCircle, Loader2 
+  Check, AlertCircle, FileText, FileSignature, MapPin, Building, 
+  ShieldCheck, CheckCircle, Smartphone, ArrowRight, ArrowLeft, Loader2, Landmark,
+  Square, CheckSquare
 } from 'lucide-react';
 import axios from 'axios';
-import SignatureCanvas from 'react-signature-canvas';
+
 import styles from './InvestorProfileWizard.module.css';
 
 const steps = [
@@ -20,6 +21,7 @@ export function InvestorProfileWizard({ user, onComplete }) {
   const [step, setStep] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
+  const [isFinished, setIsFinished] = useState(false);
   
   // Form State
   const initialCpf = user?.cpf ? user.cpf.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, "$1.$2.$3-$4") : '';
@@ -73,9 +75,6 @@ export function InvestorProfileWizard({ user, onComplete }) {
   });
   
   const [acceptedTerms, setAcceptedTerms] = useState(false);
-  
-  const sigCanvas = useRef({});
-  const [isFinished, setIsFinished] = useState(false);
 
   // Masks
   const handleCpfChange = async (e) => {
@@ -83,7 +82,6 @@ export function InvestorProfileWizard({ user, onComplete }) {
     let val = e.target.value.replace(/\D/g, '');
     if (val.length > 11) val = val.slice(0, 11);
     
-    // Mask CPF
     let masked = val;
     if (val.length > 9) masked = val.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, "$1.$2.$3-$4");
     else if (val.length > 6) masked = val.replace(/(\d{3})(\d{3})(\d{1,3})/, "$1.$2.$3");
@@ -91,7 +89,6 @@ export function InvestorProfileWizard({ user, onComplete }) {
     
     setCpf(masked);
 
-    // Auto Fetch CPF
     if (val.length === 11) {
       fetchCpf(val);
     } else {
@@ -139,18 +136,13 @@ export function InvestorProfileWizard({ user, onComplete }) {
     if (step === 2) return cep && cep.length === 9 && addressData.street && addressData.number && addressData.neighborhood && addressData.city && addressData.state;
     if (step === 3) return bankData.bank && bankData.agency && bankData.account && bankData.accountType;
     if (step === 4) return Object.values(declarations).every(v => v);
-    if (step === 5) {
-      const sigData = sigCanvas.current.getTrimmedCanvas?.().toDataURL('image/png');
-      return acceptedTerms && sigData && sigData !== 'data:,'; // Ensure signature exists
-    }
+    if (step === 5) return acceptedTerms;
     return true;
   };
 
   const submitProfile = async () => {
     setIsLoading(true);
     try {
-      const signature = sigCanvas.current.getTrimmedCanvas().toDataURL('image/png');
-      
       await axios.post('/api/investor-profile', {
         cpf: identityData.cpf,
         fullName: identityData.nome,
@@ -165,7 +157,7 @@ export function InvestorProfileWizard({ user, onComplete }) {
         ...bankData,
         
         acceptedTerms,
-        signature
+        signature: 'Assinatura Eletrônica via Checkbox Confirmada'
       });
       
       setIsFinished(true);
@@ -403,7 +395,7 @@ export function InvestorProfileWizard({ user, onComplete }) {
               onClick={() => handleDeclarationToggle('d1')}
             >
               <div className={styles.declarationIcon}>
-                <Check size={24} />
+                {declarations.d1 ? <CheckSquare size={24} /> : <Square size={24} color="#ccc" />}
               </div>
               <div className={styles.declarationText}>
                 Declaro que os recursos financeiros utilizados nas operações possuem origem lícita e estão devidamente declarados à Receita Federal.
@@ -415,7 +407,7 @@ export function InvestorProfileWizard({ user, onComplete }) {
               onClick={() => handleDeclarationToggle('d2')}
             >
               <div className={styles.declarationIcon}>
-                <Check size={24} />
+                {declarations.d2 ? <CheckSquare size={24} /> : <Square size={24} color="#ccc" />}
               </div>
               <div className={styles.declarationText}>
                 Li e aceito as regras do Marketplace, concordando em manter a transparência nas negociações.
@@ -427,7 +419,7 @@ export function InvestorProfileWizard({ user, onComplete }) {
               onClick={() => handleDeclarationToggle('d3')}
             >
               <div className={styles.declarationIcon}>
-                <Check size={24} />
+                {declarations.d3 ? <CheckSquare size={24} /> : <Square size={24} color="#ccc" />}
               </div>
               <div className={styles.declarationText}>
                 Estou ciente de que a plataforma não realiza a movimentação financeira entre as partes. Todas as transferências ocorrerão de forma direta, sendo a plataforma exclusiva para estruturação, análise de risco, formalização e acompanhamento.
@@ -439,7 +431,7 @@ export function InvestorProfileWizard({ user, onComplete }) {
               onClick={() => handleDeclarationToggle('d4')}
             >
               <div className={styles.declarationIcon}>
-                <Check size={24} />
+                {declarations.d4 ? <CheckSquare size={24} /> : <Square size={24} color="#ccc" />}
               </div>
               <div className={styles.declarationText}>
                 Autorizo a utilização das minhas informações exclusivamente para formalização das operações e confecção dos contratos jurídicos.
@@ -461,32 +453,20 @@ export function InvestorProfileWizard({ user, onComplete }) {
               <p>4. Em caso de inadimplência, a plataforma poderá oferecer serviços de cobrança extrajudicial, caso contratados em apartado.</p>
               <p>5. O perfil poderá ser suspenso caso sejam identificadas práticas que violem as políticas do Marketplace.</p>
               {/* Fake long text for scroll */}
-              <p style={{ marginTop: '20px', color: '#999' }}>[Continue rolando para aceitar os termos...]</p>
-              <br/><br/><br/><br/><br/><br/>
+              {/* <p style={{ marginTop: '20px', color: '#999' }}>[Continue rolando para aceitar os termos...]</p> */}
+              {/* <br/><br/><br/><br/><br/><br/> */}
             </div>
 
-            <div style={{ marginBottom: '24px', display: 'flex', alignItems: 'center', gap: '12px' }}>
-              <input 
-                type="checkbox" 
-                id="acceptTerms"
-                checked={acceptedTerms}
-                onChange={e => setAcceptedTerms(e.target.checked)}
-                style={{ width: '20px', height: '20px' }}
-              />
-              <label htmlFor="acceptTerms" style={{ fontSize: '1.1rem', fontWeight: 500 }}>Li e concordo com os Termos de Uso</label>
-            </div>
-
-            <div className={styles.inputGroup}>
-              <label>Assinatura Eletrônica</label>
-              <div className={styles.signatureContainer}>
-                <SignatureCanvas 
-                  ref={sigCanvas} 
-                  penColor='black'
-                  canvasProps={{ width: 700, height: 200, className: 'sigCanvas' }} 
-                />
+            <div 
+              className={`${styles.declarationCard} ${acceptedTerms ? styles.selected : ''}`}
+              onClick={() => setAcceptedTerms(!acceptedTerms)}
+              style={{ marginTop: '30px' }}
+            >
+              <div className={styles.declarationIcon}>
+                {acceptedTerms ? <CheckSquare size={24} /> : <Square size={24} color="#ccc" />}
               </div>
-              <div className={styles.signatureActions}>
-                <button className={styles.clearBtn} onClick={() => sigCanvas.current.clear()}>Limpar assinatura</button>
+              <div className={styles.declarationText} style={{ fontSize: '1.2rem', fontWeight: 600 }}>
+                Assino eletronicamente e concordo integralmente com os Termos de Uso e regras do Marketplace.
               </div>
             </div>
           </motion.div>
