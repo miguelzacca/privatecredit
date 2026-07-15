@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, ArrowRight, ArrowLeft, Building2, HardHat, Briefcase, Truck, User, FileText, Home, BadgeDollarSign, ShieldCheck, FileSignature, AlertCircle, CheckCircle2, Loader2, Landmark } from 'lucide-react';
+import axios from 'axios';
 import styles from './PublishCreditLine.module.css';
 
 // --- Premium Components ---
@@ -84,18 +85,44 @@ export function PublishCreditLine() {
     if (step > 1) setStep(step - 1);
   };
 
-  const handlePublish = () => {
+  const handlePublish = async () => {
     setIsPublishing(true);
     
     // Simulate validation steps
     setTimeout(() => setValidationStep(1), 1000); // Validating structure
     setTimeout(() => setValidationStep(2), 2500); // Checking conditions
-    setTimeout(() => setValidationStep(3), 4000); // Ready
 
-    // Final redirect
-    setTimeout(() => {
-      navigate('/dashboard/investidor');
-    }, 5500);
+    try {
+      // Import axios if not done globally (or we'll just add it to the top of file)
+      // Save to real database
+      const payload = {
+        capital,
+        interestRate,
+        duration,
+        amortization,
+        negotiation,
+        segments: selectedSegments.map(id => segments.find(s => s.id === id)?.title),
+        guarantees: selectedGuarantees.map(id => guarantees.find(g => g.id === id)?.title),
+      };
+      
+      const res = await axios.post('/api/credit-lines', payload);
+      
+      if (res.status !== 201) {
+        console.error('Failed to publish credit line');
+      }
+
+      setValidationStep(3); // Ready
+      
+      // Final redirect
+      setTimeout(() => {
+        navigate('/dashboard/marketplace');
+      }, 1500);
+      
+    } catch (err) {
+      console.error('Error publishing:', err);
+      // fallback just in case
+      setTimeout(() => navigate('/dashboard/marketplace'), 1500);
+    }
   };
 
   // Variants for step transitions

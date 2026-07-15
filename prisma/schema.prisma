@@ -18,8 +18,9 @@ model User {
   image      String?
   phone      String?
   profile    String?
-  properties Property[]
-  createdAt  DateTime     @default(now())
+  properties  Property[]
+  creditLines CreditLine[]
+  createdAt   DateTime     @default(now())
 }
 
 model MagicToken {
@@ -52,4 +53,18 @@ model Property {
   userId        String
   user          User     @relation(fields: [userId], references: [id])
   createdAt   DateTime @default(now())
+}
+
+model CreditLine {
+  id            String   @id @default(uuid())
+  capital       Float
+  interestRate  Float
+  duration      Int
+  amortization  Boolean  @default(true)
+  negotiation   Boolean  @default(false)
+  segments      String   // JSON string or comma-separated
+  guarantees    String   // JSON string or comma-separated
+  userId        String
+  user          User     @relation(fields: [userId], references: [id])
+  createdAt     DateTime @default(now())
 }

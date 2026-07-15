@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Search, SlidersHorizontal, ShieldCheck, Star, Clock, ArrowRight, Activity, Percent } from 'lucide-react';
+import axios from 'axios';
 import styles from './Marketplace.module.css';
 
 const containerVariants = {
@@ -18,6 +19,21 @@ const mockOffers = [];
 
 export function Marketplace() {
   const [showFilters, setShowFilters] = useState(false);
+  const [offers, setOffers] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    axios.get('/api/credit-lines')
+      .then(res => {
+        setOffers([...res.data.data, ...mockOffers]);
+      })
+      .catch(err => {
+        console.error('Error fetching credit lines:', err);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  }, []);
 
   return (
     <motion.div className={styles.container} variants={containerVariants} initial="hidden" animate="show">
@@ -83,7 +99,11 @@ export function Marketplace() {
         )}
       </AnimatePresence>
 
-      {mockOffers.length === 0 ? (
+      {loading ? (
+        <div style={{ textAlign: 'center', padding: '80px 24px', background: '#fff', borderRadius: '24px', border: '1px dashed rgba(0,0,0,0.1)' }}>
+          <h3 style={{ fontSize: '20px', fontWeight: '600', color: '#111', marginBottom: '8px' }}>Carregando ofertas...</h3>
+        </div>
+      ) : offers.length === 0 ? (
         <div style={{ textAlign: 'center', padding: '80px 24px', background: '#fff', borderRadius: '24px', border: '1px dashed rgba(0,0,0,0.1)' }}>
           <Search size={48} color="#ccc" style={{ marginBottom: '16px' }} />
           <h3 style={{ fontSize: '20px', fontWeight: '600', color: '#111', marginBottom: '8px' }}>Nenhuma oferta encontrada</h3>
@@ -91,7 +111,7 @@ export function Marketplace() {
         </div>
       ) : (
         <div className={styles.grid}>
-          {mockOffers.map((offer) => (
+          {offers.map((offer) => (
             <motion.div key={offer.id} variants={itemVariants}>
               <Link to={`/dashboard/marketplace/${offer.id}`} className={styles.card}>
                 <div className={styles.cardHeader}>
@@ -114,7 +134,7 @@ export function Marketplace() {
                 <div className={styles.mainStats}>
                   <div className={styles.mainStat}>
                     <span className={styles.statLabel}>Disponível até</span>
-                    <span className={styles.statValue}>{offer.maxAmount}</span>
+                    <span className={styles.statValue}>R$ {offer.maxAmount}</span>
                   </div>
                   <div className={styles.mainStat}>
                     <span className={styles.statLabel}>Juros a partir de</span>
@@ -133,7 +153,7 @@ export function Marketplace() {
 
                 <div className={styles.cardFooter}>
                   <div className={styles.tags}>
-                    {offer.tags.map((tag, i) => (
+                    {offer.tags && offer.tags.map((tag, i) => (
                       <span key={i} className={styles.tag}>{tag}</span>
                     ))}
                   </div>
