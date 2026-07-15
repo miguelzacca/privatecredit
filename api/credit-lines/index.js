@@ -39,13 +39,18 @@ export default async function handler(req, res) {
 
         return {
           id: line.id,
+          title: `Crédito ${line.capital >= 1000000 ? 'Premium' : 'Padrão'}`,
           investor: line.user?.name || 'Investidor Privado',
           rating: '5.0', // Fixed for demo
           maxAmount: formatCurrency(line.capital),
+          minAmount: formatCurrency(line.capital * 0.1),
           rate: `${line.interestRate.toFixed(2)}% a.m.`,
           term: `Até ${line.duration}x`,
           volume: 'Novo',
+          responseTime: '24h',
+          guarantees: parsedGuarantees.length > 0 ? parsedGuarantees.join(', ') : 'A consultar',
           tags: parsedSegments.length > 0 ? parsedSegments : ['Diversos'],
+          badges: ['Nova', 'Verificado'],
           capital: line.capital,
           interestRate: line.interestRate,
           duration: line.duration,
