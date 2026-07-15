@@ -136,7 +136,7 @@ export function InvestorProfileWizard({ user, onComplete }) {
 
   const canProceed = () => {
     if (step === 1) return !!identityData && !error;
-    if (step === 2) return addressData.street && addressData.number && addressData.city;
+    if (step === 2) return cep && cep.length === 9 && addressData.street && addressData.number && addressData.neighborhood && addressData.city && addressData.state;
     if (step === 3) return bankData.bank && bankData.agency && bankData.account && bankData.accountType;
     if (step === 4) return Object.values(declarations).every(v => v);
     if (step === 5) {
