@@ -42,8 +42,8 @@ function emailHtml({ name, magicUrl, isRegister }) {
     : "Link de acesso à sua conta";
   const cta = isRegister ? "Confirmar e entrar" : "Acessar minha conta";
   const info = isRegister
-    ? "Você solicitou criar uma conta na plataforma Corretores do Litoral."
-    : "Você solicitou um link de acesso à sua conta na plataforma Corretores do Litoral.";
+    ? "Você solicitou criar uma conta na plataforma White Private Credit."
+    : "Você solicitou um link de acesso à sua conta na plataforma White Private Credit.";
 
   return `<!DOCTYPE html>
 <html lang="pt-BR">
@@ -59,8 +59,8 @@ function emailHtml({ name, magicUrl, isRegister }) {
         <table width="560" cellpadding="0" cellspacing="0" style="background:#ffffff;border-radius:16px;overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,0.08);">
           <!-- Header -->
           <tr>
-            <td style="background:linear-gradient(135deg,#0d2342 0%,#1a3a5c 100%);padding:36px 40px;text-align:center;">
-              <p style="margin:0;font-size:22px;font-weight:800;color:#ffffff;letter-spacing:-0.5px;">Corretores <span style="color:#C9A84C;">do Litoral</span></p>
+            <td style="background:linear-gradient(135deg,#000000 0%,#333333 100%);padding:36px 40px;text-align:center;">
+              <p style="margin:0;font-size:22px;font-weight:800;color:#ffffff;letter-spacing:-0.5px;">White <span style="color:#cccccc;">Private Credit</span></p>
             </td>
           </tr>
           <!-- Body -->
@@ -72,14 +72,14 @@ function emailHtml({ name, magicUrl, isRegister }) {
               <!-- CTA Button -->
               <table cellpadding="0" cellspacing="0" style="margin:0 auto 28px;">
                 <tr>
-                  <td style="background:#C9A84C;border-radius:10px;">
-                    <a href="${magicUrl}" style="display:inline-block;padding:14px 36px;font-size:16px;font-weight:700;color:#0d2342;text-decoration:none;letter-spacing:0.2px;">${cta} →</a>
+                  <td style="background:#000000;border-radius:10px;">
+                    <a href="${magicUrl}" style="display:inline-block;padding:14px 36px;font-size:16px;font-weight:700;color:#ffffff;text-decoration:none;letter-spacing:0.2px;">${cta} →</a>
                   </td>
                 </tr>
               </table>
               <!-- Fallback URL -->
               <p style="margin:0 0 8px;font-size:13px;color:#94a3b8;">Se o botão não funcionar, copie e cole este link no navegador:</p>
-              <p style="margin:0;font-size:12px;color:#C9A84C;word-break:break-all;">${magicUrl}</p>
+              <p style="margin:0;font-size:12px;color:#000000;word-break:break-all;">${magicUrl}</p>
             </td>
           </tr>
           <!-- Footer -->
@@ -190,11 +190,11 @@ export default async function handler(req, res) {
     // Send email
     const transporter = createTransporter();
     const subject = isRegister
-      ? "Confirme seu cadastro — Corretores do Litoral"
-      : "Seu link de acesso — Corretores do Litoral";
+      ? "Confirme seu cadastro — White Private Credit"
+      : "Seu link de acesso — White Private Credit";
 
     await transporter.sendMail({
-      from: `"Corretores do Litoral" <${process.env.SMTP_USER}>`,
+      from: `"White Private Credit" <${process.env.SMTP_USER}>`,
       to: normalizedEmail,
       subject,
       html: emailHtml({ name: safeName?.trim() || "usuário", magicUrl, isRegister }),
