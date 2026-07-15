@@ -17,6 +17,7 @@ model User {
   cpf        String?
   image      String?
   phone      String?
+  profile    String?
   properties Property[]
   createdAt  DateTime     @default(now())
 }

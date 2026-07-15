@@ -44,7 +44,7 @@ export default function MagicVerify() {
   const [searchParams] = useSearchParams();
   const token = searchParams.get('token');
   const navigate = useNavigate();
-  const { login } = useAuth();
+  const { login, user } = useAuth();
 
   const [status, setStatus] = useState('loading'); // 'loading' | 'success' | 'error'
   const [errorMeta, setErrorMeta] = useState(null);
@@ -73,16 +73,18 @@ export default function MagicVerify() {
       });
   }, [token, login]);
 
+  const nextPath = (user && user.profile) ? `/dashboard/${user.profile}` : '/onboarding';
+
   // Countdown redirect on success
   useEffect(() => {
     if (status !== 'success') return;
     if (countdown <= 0) {
-      navigate('/');
+      navigate(nextPath);
       return;
     }
     const t = setTimeout(() => setCountdown(c => c - 1), 1000);
     return () => clearTimeout(t);
-  }, [status, countdown, navigate]);
+  }, [status, countdown, navigate, nextPath]);
 
   return (
     <div className={styles.container}>
@@ -115,7 +117,7 @@ export default function MagicVerify() {
               Você foi autenticado com sucesso.<br />
               Redirecionando em <strong>{countdown}</strong> segundo{countdown !== 1 ? 's' : ''}...
             </p>
-            <Link to="/" className={styles.btnPrimary}>
+            <Link to={nextPath} className={styles.btnPrimary}>
               Ir para o Painel →
             </Link>
           </div>

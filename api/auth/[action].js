@@ -75,7 +75,7 @@ export default async function handler(req, res) {
           path: '/'
         }));
 
-        return res.status(200).json({ user: { id: user.id, name: user.name, email: user.email, image: user.image, phone: user.phone, cpf: user.cpf } });
+        return res.status(200).json({ user: { id: user.id, name: user.name, email: user.email, image: user.image, phone: user.phone, cpf: user.cpf, profile: user.profile } });
       } catch (err) {
         console.error('Google Auth Error:', err);
         return res.status(500).json({ error: 'Falha na autenticação com o Google' });
@@ -103,7 +103,7 @@ export default async function handler(req, res) {
 
       const user = await prisma.user.findUnique({ 
         where: { id: String(authData.userId) },
-        select: { id: true, name: true, email: true, image: true, phone: true, cpf: true }
+        select: { id: true, name: true, email: true, image: true, phone: true, cpf: true, profile: true }
       });
 
       if (!user) return res.status(401).json({ error: 'User not found' });

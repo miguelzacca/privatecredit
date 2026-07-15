@@ -3,6 +3,7 @@ import { motion, useScroll, useMotionValueEvent } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import clsx from 'clsx';
 import { Button } from './Button';
+import { useAuth } from '../contexts/AuthContext';
 import styles from './Navbar.module.css';
 import { Shield } from 'lucide-react';
 
@@ -10,6 +11,7 @@ export function Navbar() {
   const { scrollY } = useScroll();
   const [hidden, setHidden] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const { user } = useAuth();
 
   useMotionValueEvent(scrollY, "change", (latest) => {
     const previous = scrollY.getPrevious();
@@ -20,6 +22,8 @@ export function Navbar() {
     }
     setIsScrolled(latest > 50);
   });
+
+  const nextPath = (user && user.profile) ? `/dashboard/${user.profile}` : '/onboarding';
 
   return (
     <motion.nav
@@ -44,12 +48,20 @@ export function Navbar() {
         </div>
 
         <div className={styles.actions}>
-          <Link to="/login">
-            <Button variant="ghost" size="sm" className={styles.loginBtn}>Entrar</Button>
-          </Link>
-          <Link to="/login">
-            <Button variant="primary" size="sm">Começar</Button>
-          </Link>
+          {user ? (
+            <Link to={nextPath}>
+              <Button variant="primary" size="sm">Acessar Painel</Button>
+            </Link>
+          ) : (
+            <>
+              <Link to="/login">
+                <Button variant="ghost" size="sm" className={styles.loginBtn}>Entrar</Button>
+              </Link>
+              <Link to="/login">
+                <Button variant="primary" size="sm">Começar</Button>
+              </Link>
+            </>
+          )}
         </div>
       </div>
     </motion.nav>

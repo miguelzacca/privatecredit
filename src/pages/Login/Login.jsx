@@ -42,8 +42,18 @@ export default function Login() {
   }, [cooldown]);
 
   const navigate = useNavigate();
-  const { login } = useAuth();
+  const { login, user } = useAuth();
   const emailRef = useRef(null);
+
+  useEffect(() => {
+    if (user) {
+      if (user.profile) {
+        navigate(`/dashboard/${user.profile}`, { replace: true });
+      } else {
+        navigate('/onboarding', { replace: true });
+      }
+    }
+  }, [user, navigate]);
 
   const emailValid = isValidEmail(email);
   const emailError = emailTouched && !emailValid && email.length > 0;
@@ -55,7 +65,11 @@ export default function Login() {
     try {
       const res = await axios.post('/api/auth/google', { token: tokenResponse.access_token });
       login(res.data.user);
-      navigate('/');
+      if (res.data.user && res.data.user.profile) {
+        navigate(`/dashboard/${res.data.user.profile}`);
+      } else {
+        navigate('/onboarding');
+      }
     } catch (err) {
       setError(err.response?.data?.error || err.message || 'Erro ao fazer login com o Google');
       setGoogleLoading(false);
