@@ -8,6 +8,7 @@ import { Infrastructure } from '../../sections/Infrastructure/Infrastructure';
 import { Metrics } from '../../sections/Metrics/Metrics';
 import { Security } from '../../sections/Security/Security';
 import { Footer } from '../../sections/Footer/Footer';
+import { CreditSimulator } from '../../sections/CreditSimulator/CreditSimulator';
 
 export function Home() {
   useEffect(() => {
@@ -40,6 +41,7 @@ export function Home() {
       <Navbar />
       <main>
         <Hero />
+        <CreditSimulator />
         <Duality />
         <Flow />
         <Infrastructure />
