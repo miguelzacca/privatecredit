@@ -27,35 +27,7 @@ export function InvestidorDashboard() {
     { label: 'Operações Ativas', value: '42', icon: Activity, trend: 'Estável', isUp: true },
   ];
 
-  const creditLines = [
-    {
-      id: 1,
-      name: 'Capital de Giro Prime',
-      status: 'ativa',
-      available: 'R$ 1.500.000',
-      rate: '3,00% a.m.',
-      term: 'Até 36x',
-      tags: ['Empresas', 'Garantia Real']
-    },
-    {
-      id: 2,
-      name: 'Antecipação Recebíveis',
-      status: 'ativa',
-      available: 'R$ 500.000',
-      rate: '2,50% a.m.',
-      term: 'Até 12x',
-      tags: ['Fornecedores', 'Sem Garantia']
-    },
-    {
-      id: 3,
-      name: 'Financiamento Construtoras',
-      status: 'pausada',
-      available: 'R$ 5.000.000',
-      rate: '4,50% a.m.',
-      term: 'Até 60x',
-      tags: ['Construtoras', 'Alienação Fiduciária']
-    }
-  ];
+  const creditLines = []; // Removido mocks a pedido do usuário
 
   const filteredLines = creditLines.filter(line => {
     if (filter === 'todas') return true;
@@ -120,9 +92,20 @@ export function InvestidorDashboard() {
           </div>
         </div>
 
-        <div className={styles.linesGrid}>
-          {filteredLines.map((line) => (
-            <motion.div key={line.id} variants={itemVariants} className={styles.lineCard}>
+        {filteredLines.length === 0 ? (
+          <div style={{ textAlign: 'center', padding: '64px 24px', background: '#fff', borderRadius: '20px', border: '1px dashed rgba(0,0,0,0.1)' }}>
+            <Wallet size={48} color="#ccc" style={{ marginBottom: '16px' }} />
+            <h3 style={{ fontSize: '18px', fontWeight: '600', color: '#111', marginBottom: '8px' }}>Nenhuma linha de crédito encontrada</h3>
+            <p style={{ color: '#666', marginBottom: '24px', fontSize: '15px' }}>Você ainda não possui linhas de crédito {filter !== 'todas' ? `com status "${filter}"` : 'publicadas'}.</p>
+            <Link to="/dashboard/investidor/nova-linha" className={styles.publishBtn} style={{ display: 'inline-flex', margin: '0 auto' }}>
+              <Plus size={18} />
+              Publicar Primeira Linha
+            </Link>
+          </div>
+        ) : (
+          <div className={styles.linesGrid}>
+            {filteredLines.map((line) => (
+              <motion.div key={line.id} variants={itemVariants} className={styles.lineCard}>
               <div className={styles.lineHeader}>
                 <div>
                   <div className={`${styles.lineStatus} ${line.status === 'pausada' ? styles.paused : ''}`}>
@@ -161,6 +144,7 @@ export function InvestidorDashboard() {
             </motion.div>
           ))}
         </div>
+        )}
       </motion.div>
     </motion.div>
   );
