@@ -103,7 +103,7 @@ export default function Login() {
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" className={styles.logoIcon}>
               <path d="M12 2L2 22H22L12 2Z" fill="black" />
             </svg>
-            WPC
+            LOGO
           </Link>
         </div>
         
