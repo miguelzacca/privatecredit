@@ -1,6 +1,12 @@
 import prisma from "./_lib/prisma.js";
+import { applyRateLimit } from "./_lib/rateLimit.js";
 
 export default async function handler(req, res) {
+  const isAllowed = await applyRateLimit(req, res);
+  if (!isAllowed) {
+    return res.status(429).send('Muitas requisições. Tente novamente mais tarde.');
+  }
+
   try {
     // Busca os slugs de todos os imóveis para gerar o sitemap
     const properties = await prisma.property.findMany({

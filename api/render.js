@@ -2,6 +2,7 @@ import prisma from "./_lib/prisma.js";
 import { readFileSync } from "fs";
 import { join, dirname } from "path";
 import { fileURLToPath } from "url";
+import { applyRateLimit } from "./_lib/rateLimit.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
@@ -110,6 +111,11 @@ function buildHtml({ title, description, image, url, cssLinks, scriptTag }) {
 }
 
 export default async function handler(req, res) {
+  const isAllowed = await applyRateLimit(req, res);
+  if (!isAllowed) {
+    return res.status(429).send('Muitas requisições. Tente novamente mais tarde.');
+  }
+
   let { slug, type } = req.query;
 
   // Fallbacks de extração

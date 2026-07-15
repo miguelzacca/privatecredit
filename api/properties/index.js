@@ -1,6 +1,7 @@
 import prisma from '../_lib/prisma.js'
 import { verifyAuth } from '../_lib/auth.js'
 import { verifyCsrf } from '../_lib/csrf.js'
+import { applyRateLimit } from '../_lib/rateLimit.js'
 import { callLlama } from '../_lib/ai.js'
 import Fuse from 'fuse.js'
 import xss from 'xss'
@@ -22,6 +23,11 @@ cloudinary.config({
 })
 
 export default async function handler(req, res) {
+  const isAllowed = await applyRateLimit(req, res);
+  if (!isAllowed) {
+    return res.status(429).json({ error: 'Muitas requisições. Tente novamente mais tarde.' });
+  }
+
   if (!verifyCsrf(req)) {
     return res.status(403).json({
       error: 'Token CSRF inválido ou ausente',

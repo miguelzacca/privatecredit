@@ -120,6 +120,16 @@ function emailHtml({ name, magicUrl, isRegister }) {
 export default async function handler(req, res) {
   const { action } = req.query
 
+  const isAllowed = await applyRateLimit(req, res, {
+    limit: 20,
+    windowMs: 60000,
+  })
+  if (!isAllowed) {
+    return res
+      .status(429)
+      .json({ error: 'Muitas requisições. Tente novamente mais tarde.' })
+  }
+
   if (req.method === 'GET' && action === 'csrf') {
     const token = generateCsrfToken()
     setCsrfCookies(res, token)
@@ -227,15 +237,6 @@ export default async function handler(req, res) {
     }
   }
 
-  const isAllowed = await applyRateLimit(req, res, {
-    limit: 20,
-    windowMs: 60000,
-  })
-  if (!isAllowed) {
-    return res
-      .status(429)
-      .json({ error: 'Muitas requisições. Tente novamente mais tarde.' })
-  }
 
   if (req.method === 'POST') {
     if (action === 'magic-send') {

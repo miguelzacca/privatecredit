@@ -1,6 +1,7 @@
 import { verifyAuth } from '../_lib/auth.js'
 import { callLlama } from '../_lib/ai.js'
 import prisma from '../_lib/prisma.js'
+import { applyRateLimit } from '../_lib/rateLimit.js'
 
 function fmt(n) {
   if (n == null) return 'R$ 0,00'
@@ -128,6 +129,11 @@ Para calcular juros compostos ou tabela Price (amortização), você mesmo pode 
 
 export default async function handler(req, res) {
   const { action } = req.query
+
+  const isAllowed = await applyRateLimit(req, res)
+  if (!isAllowed) {
+    return res.status(429).json({ error: 'Muitas requisições. Tente novamente mais tarde.' })
+  }
 
   if (req.method !== 'POST')
     return res.status(405).json({ error: 'Method not allowed' })

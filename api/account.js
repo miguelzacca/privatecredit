@@ -6,17 +6,17 @@ import { validateCreciByCpf } from "./_lib/creci.js";
 import axios from "axios";
 
 export default async function handler(req, res) {
+  const isAllowed = await applyRateLimit(req, res, { limit: 20, windowMs: 60000 });
+  if (!isAllowed) {
+    return res.status(429).json({ error: 'Muitas requisições. Tente novamente mais tarde.' });
+  }
+
   const { action } = req.query;
 
   // ---------------------------------------------------------
   // ACTION: profile
   // ---------------------------------------------------------
   if (action === 'profile') {
-    const isAllowed = await applyRateLimit(req, res, { limit: 20, windowMs: 60000 });
-    if (!isAllowed) {
-      return res.status(429).json({ error: 'Muitas requisições. Tente novamente mais tarde.' });
-    }
-
     if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
     if (!verifyCsrf(req)) return res.status(403).json({ error: 'Token CSRF inválido ou ausente' });
 
