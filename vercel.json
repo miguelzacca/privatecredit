@@ -16,6 +16,22 @@
   ],
   "rewrites": [
     {
+      "source": "/api/user/profile",
+      "destination": "/api/account?action=profile"
+    },
+    {
+      "source": "/api/investor-profile",
+      "destination": "/api/account?action=investor-profile"
+    },
+    {
+      "source": "/api/validate-creci",
+      "destination": "/api/account?action=validate-creci"
+    },
+    {
+      "source": "/api/apifull",
+      "destination": "/api/account?action=apifull"
+    },
+    {
       "source": "/sitemap.xml",
       "destination": "/api/sitemap"
     },
