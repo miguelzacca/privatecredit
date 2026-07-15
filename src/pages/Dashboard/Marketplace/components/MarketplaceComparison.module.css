@@ -4,9 +4,9 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0,0,0,0.5);
+  background: rgba(0, 0, 0, 0.5);
   backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
   z-index: 2000;
   display: flex;
   align-items: center;
@@ -20,7 +20,7 @@
   max-width: 1200px;
   height: 90vh;
   border-radius: 32px;
-  box-shadow: 0 32px 64px rgba(0,0,0,0.2);
+  box-shadow: 0 32px 64px rgba(0, 0, 0, 0.2);
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -31,7 +31,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border-bottom: 1px solid rgba(0,0,0,0.06);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
   background: #fcfcfc;
 }
 
@@ -72,7 +72,7 @@
 }
 
 .closeBtn:hover {
-  background: rgba(0,0,0,0.05);
+  background: rgba(0, 0, 0, 0.05);
   color: #111;
 }
 
@@ -108,7 +108,7 @@
 
 .emptySlot {
   height: 120px;
-  border: 2px dashed rgba(0,0,0,0.1);
+  border: 2px dashed rgba(0, 0, 0, 0.1);
   border-radius: 20px;
   display: flex;
   align-items: center;
@@ -121,21 +121,21 @@
 .offerHeader {
   position: relative;
   background: #fff;
-  border: 1px solid rgba(0,0,0,0.08);
+  border: 1px solid rgba(0, 0, 0, 0.08);
   border-radius: 24px;
   padding: 24px;
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.02);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02);
 }
 
 .removeBtn {
   position: absolute;
   top: 12px;
   right: 12px;
-  background: rgba(0,0,0,0.04);
+  background: rgba(0, 0, 0, 0.04);
   border: none;
   width: 28px;
   height: 28px;
@@ -181,7 +181,7 @@
 
 .compareTable tbody td {
   padding: 20px 12px;
-  border-top: 1px solid rgba(0,0,0,0.06);
+  border-top: 1px solid rgba(0, 0, 0, 0.06);
 }
 
 .featureName {
