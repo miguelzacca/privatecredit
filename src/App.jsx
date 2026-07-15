@@ -37,7 +37,9 @@ function App() {
             <Route path="investidor">
               <Route index element={<InvestidorDashboard />} />
               <Route path="nova-linha" element={<PublishCreditLine />} />
+              <Route path="publicar" element={<PublishCreditLine />} />
               <Route path="linhas/:id" element={<ManageCreditLine />} />
+              <Route path="manage/:id" element={<ManageCreditLine />} />
             </Route>
             <Route path="corretor" element={<CorretorDashboard />} />
             <Route path="construtora" element={<ConstrutoraDashboard />} />
