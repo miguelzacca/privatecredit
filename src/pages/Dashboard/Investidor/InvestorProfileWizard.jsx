@@ -111,14 +111,15 @@ export function InvestorProfileWizard({ user, onComplete }) {
     if (val.length === 8) {
       setIsLoading(true);
       try {
-        const { data } = await axios.get(`https://viacep.com.br/ws/${val}/json/`);
+        const response = await fetch(`https://viacep.com.br/ws/${val}/json/`);
+        const data = await response.json();
         if (!data.erro) {
           setAddressData(prev => ({
             ...prev,
-            street: data.logradouro,
-            neighborhood: data.bairro,
-            city: data.localidade,
-            state: data.uf
+            street: data.logradouro || '',
+            neighborhood: data.bairro || '',
+            city: data.localidade || '',
+            state: data.uf || ''
           }));
         }
       } catch (err) {
@@ -282,13 +283,23 @@ export function InvestorProfileWizard({ user, onComplete }) {
               <div className={styles.col}>
                 <div className={styles.inputGroup}>
                   <label>Rua</label>
-                  <input type="text" className={`${styles.input} ${styles.disabled}`} value={addressData.street} readOnly />
+                  <input 
+                    type="text" 
+                    className={styles.input} 
+                    value={addressData.street} 
+                    onChange={e => setAddressData({...addressData, street: e.target.value})} 
+                  />
                 </div>
               </div>
               <div className={styles.col}>
                 <div className={styles.inputGroup}>
                   <label>Bairro</label>
-                  <input type="text" className={`${styles.input} ${styles.disabled}`} value={addressData.neighborhood} readOnly />
+                  <input 
+                    type="text" 
+                    className={styles.input} 
+                    value={addressData.neighborhood} 
+                    onChange={e => setAddressData({...addressData, neighborhood: e.target.value})} 
+                  />
                 </div>
               </div>
             </div>
@@ -297,13 +308,23 @@ export function InvestorProfileWizard({ user, onComplete }) {
               <div className={styles.col}>
                 <div className={styles.inputGroup}>
                   <label>Cidade</label>
-                  <input type="text" className={`${styles.input} ${styles.disabled}`} value={addressData.city} readOnly />
+                  <input 
+                    type="text" 
+                    className={styles.input} 
+                    value={addressData.city} 
+                    onChange={e => setAddressData({...addressData, city: e.target.value})} 
+                  />
                 </div>
               </div>
               <div className={styles.col}>
                 <div className={styles.inputGroup}>
                   <label>Estado</label>
-                  <input type="text" className={`${styles.input} ${styles.disabled}`} value={addressData.state} readOnly />
+                  <input 
+                    type="text" 
+                    className={styles.input} 
+                    value={addressData.state} 
+                    onChange={e => setAddressData({...addressData, state: e.target.value})} 
+                  />
                 </div>
               </div>
             </div>
